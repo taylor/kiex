@@ -1,0 +1,178 @@
+#!/usr/bin/env bash
+
+base_path="$HOME/.kiex"
+build_path="${base_path}/builds"
+elixirs_path="${base_path}/elixirs"
+
+function usage() {
+  me=$(basename $0)
+  echo "$me <list [known]|install <version>|use <version>>"
+}
+
+
+function get_known_elixir_releases() {
+  x=$(curl -H "Accept: application/json" -qs https://api.github.com/repos/elixir-lang/elixir/releases |grep '"tag_name":')
+  x=${x//\"tag_name\":/}
+  x=${x//[\",]/}
+  x=${x//v/}
+
+  echo "$x"
+}
+
+function list_known() {
+  elixir_releases=$(get_known_elixir_releases)
+  #elixir_releases=$x
+
+  echo "Known Elixir releases: "
+  #printf "%b" "   "
+  printf "%b" "${elixir_releases}\n"
+}
+
+function valid_known_release() {
+  ver="$1"
+  get_known_elixir_releases | grep -q "$1" 2> /dev/null
+  echo $?
+}
+
+function install_elixir() {
+  version="$1"
+  if [ ! "$(valid_known_release ${version})" = 0 ] ; then
+    echo "Unknown Elixir version $version"
+    echo "Use 'kiex list known' see known versions"
+    exit 1
+  fi
+
+  install_path="${elixirs_path}/elixir-${version}"
+
+  cd "$build_path"
+  git clone https://github.com/elixir-lang/elixir.git elixir-git 2> /dev/null
+  cd elixir-git
+  git checkout "v${version}"
+  make clean compile
+  mkdir -p "$install_path"
+  make "PREFIX=$install_path" install
+  echo "Installed Elixir version $version"
+  create_env_file "$version"
+  echo "Load the elixir environment file with: "
+  printf "%b" "   "
+  printf "%b" "source ${elixirs_path}/elixir-${version}.env\n"
+}
+
+function create_env_file() {
+  new_ver="$1"
+  new_file="${elixirs_path}/elixir-${new_ver}.env"
+  new_path="${elixirs_path}/elixir-${new_ver}/bin"
+  new_mix_path="${elixirs_path}/elixir-${new_ver}/ebin"
+cat <<EOF>> $new_file
+export PATH="${new_path}:\$PATH"
+export MIX_PATH="${new_mix_path}:\$MIX_PATH"
+EOF
+}
+
+use_elixir() {
+  target_elixir="$1"
+  
+  elixirs=($(
+    cd "$elixirs_path"
+    find . -maxdepth 1 -mindepth 1 -type d 2> /dev/null | sort
+    ))
+
+  for version in "${elixirs[@]//.\/}"
+  do
+    if [[ ! -x "$elixirs_path/$version/bin/elixir" ]]
+    then
+      continue
+    elif [[ ! -f "$elixirs_path/${version}.env"  ]]
+    then
+      continue
+    elif [ ! "$version" = "$target_elixir" -a ! "${version}" = "elixir-${target_elixir}" ]
+    then
+      continue
+    else
+      break
+    fi
+  done
+
+  echo "Load the elixir environment file with: "
+  printf "%b" "   "
+  printf "%b" "source ${elixirs_path}/${version}.env\n"
+}
+
+
+list_elixirs() {
+  typeset current_ruby rubies version selected system_ruby system_version \
+    default_ruby string binary
+
+  elixirs=($(
+    cd "$elixirs_path"
+    find . -maxdepth 1 -mindepth 1 -type d 2> /dev/null | sort
+    #find . -maxdepth 1 -mindepth 1 -type d | sed -e 's#./##g'
+    ))
+
+
+  #for version in "${elixirs//.\/}"
+  for version in "${elixirs[@]//.\/}"
+  do
+    if [[ ! -x "$elixirs_path/$version/bin/elixir" ]]
+    then
+      continue
+    fi
+
+    if [[ "$version" = "$current_elixir" && "$version" = "$default_elixir" ]]
+    then
+      printf "%b" "=* "
+    elif [[ "$version" = "$current_elixir" ]]
+    then
+      printf "%b" "=> "
+    elif [[ "$version" = "$default_elixir" ]]
+    then
+      printf "%b" " * "
+    else
+      printf "%b" "   "
+    fi
+
+    printf "%b" "$version"
+    printf "%b" "\n"
+  done
+}
+
+action="$1"
+shift
+
+if [ -z "$action" ] ; then
+  usage
+  exit 0
+fi
+
+case $action in
+  list)
+    if [ -z "$1" ]
+    then
+      printf "%b" "\nkiex elixirs\n\n"
+      list_elixirs
+    elif [ "$1" = "known" -o "$1" = "releases" ]
+    then
+      list_known
+    else
+      usage
+      exit 1
+    fi
+    ;;
+  install)
+    [[ -z "$1" ]] && usage && exit 1
+    install_elixir "$1"
+    ;;
+
+  use)
+    [[ -z "$1" ]] && usage && exit 1
+    use_elixir "$1"
+    ;;
+  envfile)
+    [[ -z "$1" ]] && exit 1
+    create_env_file "$1"
+    ;;
+  *)
+    usage
+    exit
+    ;;
+esac
