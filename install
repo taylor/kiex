@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [ -f $HOME/bin/kiex ] ; then
-  echo "$HOME/bin/kiex already found.  Remove to upgrade"
+  echo "$HOME/bin/kiex already installed.  Remove to re-install"
   exit 1
 fi
   

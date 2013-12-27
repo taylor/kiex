@@ -17,6 +17,16 @@ if [ ! -d "${base_path}/builds" -o ! -d "${base_path}/elixirs" ] ; then
   setup
 fi
 
+function self_update() {
+  mypath=$(dirname $(readlink -f $0))
+  cd $mypath
+  D=$(date +%Y%m%d.%H%M)
+  cp kiex kiex.bak-$D
+  curl -qs -o kiex https://raw.github.com/taylor/kiex/master/kiex
+  chmod +x kiex
+  echo "kiex instlled in $mypath is now updated"
+}
+
 function get_known_elixir_releases() {
   x=$(curl -H "Accept: application/json" -qs https://api.github.com/repos/elixir-lang/elixir/releases |grep '"tag_name":')
   x=${x//\"tag_name\":/}
@@ -177,6 +187,10 @@ case $action in
   envfile)
     [[ -z "$1" ]] && exit 1
     create_env_file "$1"
+    ;;
+  selfupdate|update_self)
+    self_update
+    exit 0
     ;;
   *)
     usage
