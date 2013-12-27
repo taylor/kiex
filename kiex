@@ -9,6 +9,13 @@ function usage() {
   echo "$me <list [known]|install <version>|use <version>>"
 }
 
+function setup() {
+  mkdir -p "${base_path}/"{builds,elixirs}
+}
+
+if [ ! -d "${base_path}/builds" -o ! -d "${base_path}/elixirs" ] ; then
+  setup
+fi
 
 function get_known_elixir_releases() {
   x=$(curl -H "Accept: application/json" -qs https://api.github.com/repos/elixir-lang/elixir/releases |grep '"tag_name":')
