@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
 
+if [ -f $HOME/bin/kiex ] ; then
+  echo "$HOME/bin/kiex already found.  Remove to upgrade"
+  exit 1
+fi
+  
 mkdir -p $HOME/bin
 curl -qs -o $HOME/bin/kiex https://raw.github.com/taylor/kiex/master/kiex
 chmod +x $HOME/bin/kiex
 
-echo "kiex has been installed in $HOME/bin.  Make sure that directory is in your path"
-echo "Type kiex to start"
+echo "kiex has been installed in $HOME/bin."
+echo "    * add \$HOME/bin to your path"
+echo "Type kiex to use it"
