@@ -3,6 +3,9 @@
 base_path="$HOME/.kiex"
 build_path="${base_path}/builds"
 elixirs_path="${base_path}/elixirs"
+elixirs_source_path="\$HOME/.kiex/elixirs"
+
+echo $elixirs_source_path
 
 function usage() {
   me=$(basename $0)
@@ -72,7 +75,7 @@ function install_elixir() {
   create_env_file "$version"
   echo "Load the elixir environment file with: "
   printf "%b" "   "
-  printf "%b" "source ${elixirs_path}/elixir-${version}.env\n"
+  printf "%b" "source ${elixirs_source_path}/elixir-${version}.env\n"
 }
 
 function create_env_file() {
