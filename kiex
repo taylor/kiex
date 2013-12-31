@@ -4,12 +4,18 @@ base_path="$HOME/.kiex"
 build_path="${base_path}/builds"
 elixirs_path="${base_path}/elixirs"
 elixirs_source_path="\$HOME/.kiex/elixirs"
-
-echo $elixirs_source_path
+kiex_url="https://raw.github.com/taylor/kiex/master/kiex"
 
 function usage() {
   me=$(basename $0)
-  echo "$me <list [known]|install <version>|use <version>>"
+  #echo "$me <list [known]|install <version>|use <version>>"
+  echo "$me commands:"
+  printf "%b" "    list            - shows currently installed elixirs\n"
+  printf "%b" "    list known      - shows available elixirs releases\n"
+  printf "%b" "    install version - installs the given release version\n"
+  printf "%b" "    use version     - use the given version for this shell\n"
+  printf "%b" "    shell version   - use the given version for this shell\n"
+  printf "%b" "    default version - sets default version to be used\n"
 }
 
 function setup() {
@@ -25,7 +31,7 @@ function self_update() {
   cd $mypath
   D=$(date +%Y%m%d.%H%M)
   cp kiex kiex.bak-$D
-  curl -qs -o kiex https://raw.github.com/taylor/kiex/master/kiex
+  curl -qs -o kiex "$kiex_url"
   chmod +x kiex
   echo "kiex instlled in $mypath is now updated"
 }
@@ -44,7 +50,6 @@ function list_known() {
   #elixir_releases=$x
 
   echo "Known Elixir releases: "
-  #printf "%b" "   "
   printf "%b" "${elixir_releases}\n"
 }
 
@@ -83,13 +88,17 @@ function create_env_file() {
   new_file="${elixirs_path}/elixir-${new_ver}.env"
   new_path="${elixirs_path}/elixir-${new_ver}/bin"
   new_mix_path="${elixirs_path}/elixir-${new_ver}/ebin"
-cat <<EOF>> $new_file
-export PATH="${new_path}:\$PATH"
-export MIX_PATH="${new_mix_path}:\$MIX_PATH"
+  if [ -f "$new_file" ] ; then
+    mv -f "$new_file" "${new_file}.old"
+  fi
+cat <<EOF> $new_file
+export ELIXIR_VERSION="$new_ver"
+export PATH="${elixirs_source_path}/elixir-${new_ver}/bin:\$PATH"
+export MIX_PATH="${elixirs_source_path}/elixir-${new_ver}/bin:\$MIX_PATH"
 EOF
 }
 
-use_elixir() {
+function find_elixir_ver() {
   target_elixir="$1"
   
   elixirs=($(
@@ -97,6 +106,7 @@ use_elixir() {
     find . -maxdepth 1 -mindepth 1 -type d 2> /dev/null | sort
     ))
 
+  #TODO: reset version to nothing if problems arise
   for version in "${elixirs[@]//.\/}"
   do
     if [[ ! -x "$elixirs_path/$version/bin/elixir" ]]
@@ -112,23 +122,62 @@ use_elixir() {
       break
     fi
   done
+  echo $version
+}
+
+function use_elixir() {
+  target_elixir="$1"
+  version=$(find_elixir_ver "$target_elixir")
 
   echo "Load the elixir environment file with: "
   printf "%b" "   "
-  printf "%b" "source ${elixirs_path}/${version}.env\n"
+  printf "%b" "source ${elixirs_source_path}/${version}.env\n"
 }
 
+function elixir_subshell() {
+  target_elixir="$1"
+  version=$(find_elixir_ver "$target_elixir")
 
-list_elixirs() {
-  typeset current_ruby rubies version selected system_ruby system_version \
-    default_ruby string binary
+  echo "Starting sub-shell with elixir version $version"
+  source "${elixirs_path}/${version}.env"
+  exec $SHELL
+}
+
+function set_default_elixir() {
+  target_elixir="$1"
+  version=$(find_elixir_ver "$target_elixir")
+
+  if [ -e ${elixirs_path}/.default ] ; then 
+    if [ -L ${elixirs_path}/.default ] ; then 
+      rm ${elixirs_path}/.default
+    else
+      echo "The file ${elixirs_path}/.default should not exists! Fix and try again."
+      exit 1
+    fi
+  fi
+  ln -s "${elixirs_path}/${version}.env" "${elixirs_path}/.default"
+  echo "Default Elixir version set to $version"
+  echo "Load right now with: source $elixirs_source_path/.default"
+}
+
+function list_elixirs() {
+  typeset current_elixir elixirs version selected system_elixir system_version \
+    default_elixir string binary
+
+  if [ -e "$elixirs_path"/.default ] ; then
+    default_elixir="elixir-$(source $elixirs_path/.default ; echo $ELIXIR_VERSION)"
+  fi
+
+  if [ -n "$(which iex)" ] ; then
+    v=$(iex --version 2> /dev/null|grep -v 'Warning: could not run')
+    current_elixir="elixir-${v/Elixir /}"
+  fi
 
   elixirs=($(
     cd "$elixirs_path"
     find . -maxdepth 1 -mindepth 1 -type d 2> /dev/null | sort
     #find . -maxdepth 1 -mindepth 1 -type d | sed -e 's#./##g'
     ))
-
 
   #for version in "${elixirs//.\/}"
   for version in "${elixirs[@]//.\/}"
@@ -154,6 +203,27 @@ list_elixirs() {
     printf "%b" "$version"
     printf "%b" "\n"
   done
+
+  if (( ${#elixirs[@]} == 0 ))
+  then
+    printf "%b" "
+# No kiex elixirs installed yet. Try 'elixir install <version>'.
+"
+  else
+    if [[ -z "${default_elixir}" ]]
+    then
+      printf "%b" "
+# Default elixir not set. Try 'kiex default <version>'.
+"
+    fi
+    printf "%b" "
+# => - current
+# =* - current && default
+#  * - default
+"
+  fi
+
+  printf "%b" "\n"
 }
 
 action="$1"
@@ -182,10 +252,17 @@ case $action in
     [[ -z "$1" ]] && usage && exit 1
     install_elixir "$1"
     ;;
-
   use)
     [[ -z "$1" ]] && usage && exit 1
     use_elixir "$1"
+    ;;
+  default)
+    [[ -z "$1" ]] && usage && exit 1
+    set_default_elixir "$1"
+    ;;
+  shell)
+    [[ -z "$1" ]] && usage && exit 1
+    elixir_subshell "$1"
     ;;
   envfile)
     [[ -z "$1" ]] && exit 1
