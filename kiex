@@ -10,12 +10,13 @@ function usage() {
   me=$(basename $0)
   #echo "$me <list [known]|install <version>|use <version>>"
   echo "$me commands:"
-  printf "%b" "    list            - shows currently installed elixirs\n"
-  printf "%b" "    list known      - shows available elixirs releases\n"
-  printf "%b" "    install version - installs the given release version\n"
-  printf "%b" "    use version     - use the given version for this shell\n"
-  printf "%b" "    shell version   - use the given version for this shell\n"
-  printf "%b" "    default version - sets default version to be used\n"
+  printf "%b" "    list              - shows currently installed elixirs\n"
+  printf "%b" "    list known        - shows available elixirs releases\n"
+  printf "%b" "    install <version> - installs the given release version\n"
+  printf "%b" "    use <version>     - use the given version for this shell\n"
+  printf "%b" "    shell <version>   - use the given version for this shell\n"
+  printf "%b" "    default <version> - sets default version to be used\n"
+  printf "%b" "    implode           - removes kiex and all installed elixirs\n"
 }
 
 function setup() {
