@@ -61,6 +61,8 @@ function get_known_elixir_releases() {
 }
 
 function list_known() {
+  echo "Getting the available releases from https://github.com/elixir-lang/elixir/releases"
+  echo
   elixir_releases=$(get_known_elixir_releases)
   #elixir_releases=$x
 
