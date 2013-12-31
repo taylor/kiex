@@ -26,6 +26,20 @@ if [ ! -d "${base_path}/builds" -o ! -d "${base_path}/elixirs" ] ; then
   setup
 fi
 
+function kiex_implode() {
+  echo -n "Type YES to remove the kiex install and all elixirs: "
+  read resp
+  if [ ! "$resp" = "YES" ] ; then
+    echo "Aborting!"
+    exit 0
+  fi
+
+  rm -rf "$HOME/.kiex"
+
+  echo "Please remove the kiex source lines from your startup script.  It looks like:"
+  echo "    [[ -s \"\$HOME/.kiex/scripts/kiex\" ]] && source \"\$HOME/.kiex/scripts/kiex\""
+}
+
 function self_update() {
   mypath=$(dirname $(readlink -f $0))
   cd $mypath
@@ -270,6 +284,10 @@ case $action in
     ;;
   selfupdate|update_self)
     self_update
+    exit 0
+    ;;
+  implode)
+    kiex_implode
     exit 0
     ;;
   *)
