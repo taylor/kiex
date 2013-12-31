@@ -1,14 +1,36 @@
 #!/usr/bin/env bash
 
-if [ -f $HOME/bin/kiex ] ; then
-  echo "$HOME/bin/kiex already installed.  Remove to re-install"
-  exit 1
-fi
-  
-mkdir -p $HOME/bin
-curl -qs -o $HOME/bin/kiex https://raw.github.com/taylor/kiex/master/kiex
-chmod +x $HOME/bin/kiex
 
-echo "kiex has been installed in $HOME/bin."
-echo "    * add \$HOME/bin to your path"
-echo "Type kiex to use it"
+KIEX_HOME="$HOME/.kiex"
+KIEX_BIN_PATH="$KIEX_HOME/bin/kiex"
+KIEX_SCRIPTS_PATH="$KIEX_HOME/scripts"
+
+REALKIEX=$(which kiex > /dev/null 2>&1)
+if [ "$?" = 0 ] ; then
+  UPGRADE=1
+else
+  UPGRADE=0
+fi
+
+
+if [ -f "$KIEX_HOME/bin/kiex" ] ; then
+  UPGRADE=1
+fi
+
+mkdir -p "$KIEX_HOME/"{bin,builds,elixirs,scripts}
+curl -qs -o "$KIEX_HOME/bin/kiex" https://raw.github.com/taylor/kiex/master/kiex
+chmod +x "$KIEX_HOME/bin/kiex"
+
+function create_kiex_env_script() {
+  cat <<"EOF"> "$KIEX_SCRIPTS_PATH/kiex"
+KIEX_HOME="$HOME/.kiex"
+export PATH=$KIEX_HOME/bin:$PATH
+[[ -f $KIEX_HOME/elixirs/.default ]] && source $KIEX_HOME/elixirs/.default
+EOF
+}
+
+create_kiex_env_script
+
+echo "kiex has been installed in $KIEX_HOME"
+echo "Add the following to your shell's config file (.bashrc/.zshrc):"
+echo "    [[ -s \"\$HOME/.kiex/scripts/kiex\" ]] && source \"\$HOME/.kiex/scripts/kiex\""
