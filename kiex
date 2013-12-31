@@ -108,8 +108,9 @@ function create_env_file() {
 cat <<EOF> $new_file
 export ELIXIR_VERSION="$new_ver"
 export PATH="${elixirs_source_path}/elixir-${new_ver}/bin:\$PATH"
-export MIX_PATH="${elixirs_source_path}/elixir-${new_ver}/bin:\$MIX_PATH"
 EOF
+#export MIX_PATH="${elixirs_source_path}/dynamo-${new_ver}/ebin:\$MIX_PATH"
+#export MIX_PATH="${elixirs_source_path}/elixir-${new_ver}/ebin:\$MIX_PATH"
 }
 
 function find_elixir_ver() {
