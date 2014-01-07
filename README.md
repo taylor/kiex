@@ -53,5 +53,4 @@ Uninstall kiex and elixirs
 
 ### TODO
 
- * Check for erlang and other Elixir prereqs.  Halt and give tips if prereqs are not met
  * Add uninstall option for installed elixirs
