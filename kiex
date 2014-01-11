@@ -11,6 +11,28 @@ erlang_min_release=16
 erlang_min_release_canidate="B"
 erlang_min_release_canidate_n=""
 
+SYSTEM=$(uname -s)
+
+if [ "$SYSTEM" = "Linux" ] ; then
+  if [ "$(grep -ic Ubuntu /etc/issue)" = 1 ] ; then
+    DISTRO="Ubuntu"
+  elif [ "$(grep -ic Centos /etc/issue)" = 1 ] ; then
+    DISTRO=Centos
+  elif [ "$([[ -f /etc/inittab ]] && grep -ic Gentoo /etc/inittab)" = 3 ] ; then
+    DISTRO=Gentoo
+  elif [ "$( grep -ic DISTRIB_ID=Arch /etc/lsb-release)" = 1 ] ; then
+    DISTRO=Arch
+  else
+    echo "Unknown Linux distribution"
+  fi
+elif [ "$SYSTEM" = "Darwin" ] ; then
+  #DISTRO=$(uname -r)
+  DISTRO=OSX
+else
+  echo "Unsupported system $SYSTEM"
+fi
+
+
 function usage() {
   me=$(basename $0)
   #echo "$me <list [known]|install <version>|use <version>>"
@@ -24,8 +46,38 @@ function usage() {
   printf "%b" "    implode           - removes kiex and all installed elixirs\n"
 }
 
+
+# NOTE: work-around for differences in readlink on BSD and Linux
+# Based on the Stack Overflow answer http://stackoverflow.com/a/1116890
+function readlink_f() {
+  TARGET_FILE="$1"
+
+  cd `dirname "$TARGET_FILE"`
+  TARGET_FILE=`basename "$TARGET_FILE"`
+
+  # Iterate down a (possible) chain of symlinks
+  while [ -L "$TARGET_FILE" ] ; do
+      TARGET_FILE=`readlink "$TARGET_FILE"`
+      cd `dirname "$TARGET_FILE"`
+      TARGET_FILE=`basename "$TARGET_FILE"`
+  done
+
+  # Compute the canonicalized name by finding the physical path 
+  # for the directory we're in and appending the target file.
+  PHYS_DIR=`pwd -P`
+  RESULT="${PHYS_DIR}/${TARGET_FILE}"
+  echo $RESULT
+}
+
 function check_erlang_release() {
-  erlang_release_file="$(dirname $(readlink -f $(which erl)))/../releases/RELEASES"
+  if [ "$SYSTEM" = "Linux" ] ; then
+    erlang_release_file="$(dirname $(readlink -f $(which erl)))/../releases/RELEASES"
+  elif [ "$SYSTEM" = "Darwin" ] ; then
+    erlang_release_file="$(dirname $(readlink_f $(which erl)))/../releases/RELEASES"
+  else
+      echo "Unknown system $SYSTEM"
+      return 1
+  fi
 
   if [ ! -e "$erlang_release_file" ] ; then
     echo "Failed to find the erlang release file!" 1>&2
