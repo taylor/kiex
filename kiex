@@ -308,7 +308,7 @@ function list_elixirs() {
   if (( ${#elixirs[@]} == 0 ))
   then
     printf "%b" "
-# No kiex elixirs installed yet. Try 'elixir install <version>'.
+# No kiex elixirs installed yet. Try 'kiex install <version>'.
 "
   else
     if [[ -z "${default_elixir}" ]]
