@@ -25,7 +25,14 @@ function usage() {
 }
 
 function check_erlang_release() {
-  erlang_release=($(awk -F, 'NR==1 {gsub(/"/,"",$3);print $3}' "$(dirname $(readlink -f $(which erl)))/../releases/RELEASES" | sed 's/R\([0-9]*\)\([A-Z]\)/\1 \2 /'))
+  erlang_release_file="$(dirname $(readlink -f $(which erl)))/../releases/RELEASES"
+
+  if [ ! -e "$erlang_release_file" ] ; then
+    echo "Failed to find the erlang release file!" 1>&2
+    return 1
+  fi
+
+  erlang_release=($(awk -F, 'NR==1 {gsub(/"/,"",$3);print $3}' "$erlang_release_file" | sed 's/R\([0-9]*\)\([A-Z]\)/\1 \2 /'))
   r="${erlang_release[0]}"
   c="${erlang_release[1]}"
   cn="${erlang_release[2]}"
@@ -33,7 +40,10 @@ function check_erlang_release() {
   #echo "erlang release: ${erlang_release[*]}, r: $r, c: $c, n: $cn"
   #elixir_req_str="Elixir requires Erlang ${erlang_min_release_full} or later"
 
-  if (( $r > $erlang_min_release )) ; then
+  if [ -z "$r" ] ; then
+    echo "Failed to extract the erlang release!" 1>&2
+    false
+  elif (( $r > $erlang_min_release )) ; then
     true
   elif (( $r < $erlang_min_release )) ; then
     false
@@ -63,9 +73,17 @@ function check_erlang_release() {
   fi
 }
 
+function erlang_bin_found() {
+  if [ -z "$(which erl 2> /dev/null)" ] ; then
+    echo "Erlang binary not found" 1>&2
+    false
+  else
+    true
+  fi
+}
 
 function exit_on_unmet_prereqs() {
-  check_erlang_release
+  deps_check
   if [ ! "$?" = 0 ]
   then
     echo "Elixir requires Erlang ${erlang_min_release_full} or later"
@@ -76,6 +94,10 @@ function exit_on_unmet_prereqs() {
     echo "   * Package manager, OS X brew install erlang, Ubuntu/Debian/CentOS see erlang-solutions, Arch see AUR"
     exit 1
   fi
+}
+
+function deps_check() {
+  erlang_bin_found && check_erlang_release
 }
 
 function setup() {
@@ -354,6 +376,10 @@ case $action in
   implode)
     kiex_implode
     exit 0
+    ;;
+  depscheck|checkdeps)
+    deps_check
+    [[ $? = 0 ]] && echo "Dependencies met" || ( echo "Dependencies not met" && exit_on_unmet_prereqs )
     ;;
   *)
     usage
