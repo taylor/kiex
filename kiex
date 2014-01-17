@@ -5,6 +5,9 @@ build_path="${base_path}/builds"
 elixirs_path="${base_path}/elixirs"
 elixirs_source_path="\$HOME/.kiex/elixirs"
 kiex_url="https://raw.github.com/taylor/kiex/master/kiex"
+KIEX_HOME="$HOME/.kiex"
+KIEX_BIN_PATH="$KIEX_HOME/bin/kiex"
+KIEX_SCRIPTS_PATH="$KIEX_HOME/scripts"
 
 # TODO: This should coorespond to Elixir releases.  Eg. R17 will be for Elixir 0.13
 erlang_min_release_full="R16B"
