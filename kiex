@@ -320,7 +320,7 @@ function use_elixir() {
   target_elixir="$1"
   version=$(find_elixir_ver "$target_elixir")
 
-  echo "Load the elixir environment file with: "
+  echo "To switch elixir versions for your current shell run: "
   printf "%b" "   "
   printf "%b" "source ${elixirs_source_path}/${version}.env\n"
 }
@@ -499,7 +499,7 @@ case $action in
     deps_check
     [[ $? = 0 ]] && echo "Dependencies met" || ( echo "Dependencies not met" && exit_on_unmet_prereqs )
     ;;
-  setup)
+  setup|reinstall)
     setup
     exit
     ;;
