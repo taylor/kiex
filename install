@@ -1,9 +1,39 @@
 #!/usr/bin/env bash
 
-
 KIEX_HOME="$HOME/.kiex"
 KIEX_BIN_PATH="$KIEX_HOME/bin/kiex"
 KIEX_SCRIPTS_PATH="$KIEX_HOME/scripts"
+
+SYSTEM=$(uname -s)
+
+if [ "$SYSTEM" = "Linux" ] ; then
+  if [ -z "$(which lsb_release)" ] ; then
+    lsb_id=$(lsb_release -s -i)
+    case $lsb_id in
+      Ubuntu) DISTRO="Ubuntu" ;;
+      Centos) DISTRO="Centos" ;;
+      Gentoo) DISTRO="Gentoo" ;;
+      Arch)   DISTRO="Arch" ;;
+      *) DISTRO="$lsb_id" ;;
+    esac
+  elif [ "$(grep -ic Ubuntu /etc/issue)" = 1 ] ; then
+    DISTRO="Ubuntu"
+  elif [ "$(grep -ic Centos /etc/issue)" = 1 ] ; then
+    DISTRO=Centos
+  elif [ "$([[ -f /etc/inittab ]] && grep -ic Gentoo /etc/inittab)" = 3 ] ; then
+    DISTRO=Gentoo
+  elif [ "$(grep -ic DISTRIB_ID=Arch /etc/lsb-release)" = 1 ] ; then
+    DISTRO=Arch
+  else
+    echo "Unknown Linux distribution"
+  fi
+elif [ "$SYSTEM" = "Darwin" ] ; then
+  #DISTRO=$(uname -r)
+  DISTRO=OSX
+else
+  echo "Unsupported system $SYSTEM"
+  exit 1
+fi
 
 REALKIEX=$(which kiex > /dev/null 2>&1)
 if [ "$?" = 0 ] ; then
