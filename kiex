@@ -6,6 +6,7 @@ elixirs_path="${base_path}/elixirs"
 elixirs_source_path="\$HOME/.kiex/elixirs"
 kiex_url="https://raw.github.com/taylor/kiex/master/kiex"
 
+# TODO: This should coorespond to Elixir releases.  Eg. R17 will be for Elixir 0.13
 erlang_min_release_full="R16B"
 erlang_min_release=16
 erlang_min_release_canidate="B"
@@ -42,6 +43,8 @@ else
   exit 1
 fi
 
+######################################
+######################################
 
 function usage() {
   me=$(basename $0)
@@ -53,8 +56,9 @@ function usage() {
   printf "%b" "    use <version>     - use the given version for this shell\n"
   printf "%b" "    shell <version>   - use the given version for this shell\n"
   printf "%b" "    default <version> - sets default version to be used\n"
-  printf "%b" "    implode           - removes kiex and all installed elixirs\n"
+  printf "%b" "    setup             - install kiex into \$HOME/.kiex\n"
   printf "%b" "    selfupdate        - update kiex itself\n"
+  printf "%b" "    implode           - removes kiex and all installed elixirs\n"
 }
 
 
@@ -163,13 +167,25 @@ function deps_check() {
   erlang_bin_found && check_erlang_release
 }
 
-function setup() {
-  mkdir -p "${base_path}/"{builds,elixirs}
+function create_kiex_env_script() {
+  cat <<"EOF"> "$KIEX_SCRIPTS_PATH/kiex"
+KIEX_HOME="$HOME/.kiex"
+export PATH=$KIEX_HOME/bin:$PATH
+[[ -f $KIEX_HOME/elixirs/.default ]] && source $KIEX_HOME/elixirs/.default
+EOF
 }
 
-if [ ! -d "${base_path}/builds" -o ! -d "${base_path}/elixirs" ] ; then
-  setup
-fi
+function setup() {
+  mkdir -p "$KIEX_HOME/"{bin,builds,elixirs,scripts}
+  curl -qs -o "$KIEX_HOME/bin/kiex" https://raw.github.com/taylor/kiex/master/kiex
+  chmod +x "$KIEX_HOME/bin/kiex"
+
+  create_kiex_env_script
+
+  echo "kiex has been installed in $KIEX_HOME"
+  echo "Add the following to your shell's config file (.bashrc/.zshrc):"
+  echo "    [[ -s \"\$HOME/.kiex/scripts/kiex\" ]] && source \"\$HOME/.kiex/scripts/kiex\""
+}
 
 function kiex_implode() {
   echo -n "Type YES to remove the kiex install and all elixirs: "
@@ -398,12 +414,36 @@ function list_elixirs() {
   printf "%b" "\n"
 }
 
+function validate_install() {
+  if [ ! -d "${base_path}/builds" \
+    -o ! -d "${base_path}/elixirs" \
+    -o ! -d "${base_path}/scripts" \
+    -o ! -d "${base_path}/bin" \
+    ] ; then
+
+    echo "Please run $me setup"
+    exit 1
+    #setup
+  fi
+}
+
+#################################
+#################################
+
 action="$1"
 shift
 
 if [ -z "$action" ] ; then
   usage
   exit 0
+fi
+
+
+
+if [ ! "$action" = "setup" ] ; then
+  validate_install
+elif [ ! "$action" = "install" -a "$1" = "kiex" ] ; then
+  validate_install
 fi
 
 case $action in
@@ -422,6 +462,10 @@ case $action in
     ;;
   install)
     [[ -z "$1" ]] && usage && exit 1
+    if [ "$1" = "kiex" ] ; then
+      setup
+      exit
+    fi
     install_elixir "$1"
     ;;
   use)
@@ -451,6 +495,10 @@ case $action in
   depscheck|checkdeps)
     deps_check
     [[ $? = 0 ]] && echo "Dependencies met" || ( echo "Dependencies not met" && exit_on_unmet_prereqs )
+    ;;
+  setup)
+    setup
+    exit
     ;;
   *)
     usage
