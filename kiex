@@ -14,13 +14,22 @@ erlang_min_release_canidate_n=""
 SYSTEM=$(uname -s)
 
 if [ "$SYSTEM" = "Linux" ] ; then
-  if [ "$(grep -ic Ubuntu /etc/issue)" = 1 ] ; then
+  if [ -z "$(which lsb_release)" ] ; then
+    lsb_id=$(lsb_release -s -i)
+    case $lsb_id in
+      Ubuntu) DISTRO="Ubuntu" ;;
+      Centos) DISTRO="Centos" ;;
+      Gentoo) DISTRO="Gentoo" ;;
+      Arch)   DISTRO="Arch" ;;
+      *) DISTRO="$lsb_id" ;;
+    esac
+  elif [ "$(grep -ic Ubuntu /etc/issue)" = 1 ] ; then
     DISTRO="Ubuntu"
   elif [ "$(grep -ic Centos /etc/issue)" = 1 ] ; then
     DISTRO=Centos
   elif [ "$([[ -f /etc/inittab ]] && grep -ic Gentoo /etc/inittab)" = 3 ] ; then
     DISTRO=Gentoo
-  elif [ "$( grep -ic DISTRIB_ID=Arch /etc/lsb-release)" = 1 ] ; then
+  elif [ "$(grep -ic DISTRIB_ID=Arch /etc/lsb-release)" = 1 ] ; then
     DISTRO=Arch
   else
     echo "Unknown Linux distribution"
@@ -30,6 +39,7 @@ elif [ "$SYSTEM" = "Darwin" ] ; then
   DISTRO=OSX
 else
   echo "Unsupported system $SYSTEM"
+  exit 1
 fi
 
 
