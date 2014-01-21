@@ -226,16 +226,15 @@ function self_update() {
   D=$(date +%Y%m%d.%H%M)
   cp kiex kiex.bak-$D
   if [ -d ../scripts ] ; then
-    cd ../scripts
-    cp kiex  kiex.bak-$D
-    cd -
+    cp ../scripts/kiex ../scripts/kiex.bak-$D
   fi
 
   setup
 
   #curl -qs -o kiex "$kiex_url"
   #chmod +x kiex
-  echo "kiex installed in $mypath is now updated"
+  #echo "kiex installed in $mypath is now updated"
+  echo "kiex installed in $KIEX_HOME is now updated"
 }
 
 function get_known_elixir_releases() {
@@ -307,6 +306,8 @@ EOF
 
 function find_elixir_ver() {
   target_elixir="$1"
+  # default to not found (1)
+  found=1
   
   elixirs=($(
     cd "$elixirs_path"
@@ -326,15 +327,25 @@ function find_elixir_ver() {
     then
       continue
     else
+      found=0
       break
     fi
   done
-  echo $version
+  if [ "$found" ] ; then
+    echo $version
+  else
+    echo ""
+  fi
 }
 
 function use_elixir() {
   target_elixir="$1"
   version=$(find_elixir_ver "$target_elixir")
+
+  if [ -z "$version" ] ; then
+    echo "Elixir version $target_elixir not found.  Try installing it"
+    exit 1
+  fi
 
   echo "To switch elixir versions for your current shell run: "
   printf "%b" "   "
@@ -345,6 +356,11 @@ function elixir_subshell() {
   target_elixir="$1"
   version=$(find_elixir_ver "$target_elixir")
 
+  if [ -z "$version" ] ; then
+    echo "Elixir version $target_elixir not found.  Try installing it"
+    exit 1
+  fi
+
   echo "Starting sub-shell with elixir version $version"
   source "${elixirs_path}/${version}.env"
   exec $SHELL
@@ -353,6 +369,11 @@ function elixir_subshell() {
 function set_default_elixir() {
   target_elixir="$1"
   version=$(find_elixir_ver "$target_elixir")
+
+  if [ -z "$version" ] ; then
+    echo "Elixir version $target_elixir not found.  Try installing it"
+    exit 1
+  fi
 
   if [ -e ${elixirs_path}/.default ] ; then 
     if [ -L ${elixirs_path}/.default ] ; then 
