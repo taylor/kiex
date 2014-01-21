@@ -9,9 +9,7 @@ Usage is based *lightly* on [RVM](http://rvm.io) and [kerl](https://github.com/s
 
 ### Install
 
-Download kiex and put it somewhere in your path.
-
-To install in $HOME/bin run the following:
+To install in $HOME/.kiex run the following:
 
 ```
 curl -qs https://raw.github.com/taylor/kiex/master/install | bash -s
@@ -20,7 +18,7 @@ curl -qs https://raw.github.com/taylor/kiex/master/install | bash -s
 ### Usage
 
 
-List installed releases
+List installed versions
  * ``` kiex list ```
 
 List known releases
@@ -30,7 +28,7 @@ Install a known release
  * ``` kiex install 0.11.2 ```
 
 Use specific elixir version
- * ``` kiex use 0.11.2 ``` -- Displays shell command to use for current shell.  Exiting shell goes to default.
+ * ``` kiex use 0.11.2 ``` -- Sets the elixir version for current shell.
 
 Use sub-shell with specific elixir version
  * ``` kiex shell 0.11.2 ``` -- Starts sub-shell with given elixir version.  Exiting shell goes to default.
@@ -41,15 +39,18 @@ Set default elixir version
 Uninstall kiex and elixirs
  * ``` kiex implode ``` -- This removes all versions of elixir installed by kiex as well as all kiex components
 
+Upgrade kiex
+ * ``` kiex selfupdate ``` -- pull down latest updates for kiex
+    - Can also re-curl
 
 ### Limitations
 
  * Does not build erlang
  * Does not build Dynamo or any other elixir app
  * Same build directory used for every build (saving space vs keeping build env around)
- * The ``` use ``` command just displays the *source* command line to run
-   - It can be added to any startup script including .rvmrc :P
  * No uninstall option for installed elixir versions
+ * No per-directory/project config file.
+   - You can hack it in by adding kiex use <version> to .rvmrc or friends ;P
 
 ### TODO
 
