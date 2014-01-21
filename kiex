@@ -307,7 +307,7 @@ EOF
 function find_elixir_ver() {
   target_elixir="$1"
   # default to not found (1)
-  found=1
+  found=""
   
   elixirs=($(
     cd "$elixirs_path"
@@ -327,11 +327,11 @@ function find_elixir_ver() {
     then
       continue
     else
-      found=0
+      found=yes
       break
     fi
   done
-  if [ "$found" ] ; then
+  if [ -n "$found" ] ; then
     echo $version
   else
     echo ""
@@ -343,7 +343,7 @@ function use_elixir() {
   version=$(find_elixir_ver "$target_elixir")
 
   if [ -z "$version" ] ; then
-    echo "Elixir version $target_elixir not found.  Try installing it"
+    echo "Elixir version $target_elixir not found.  Try kiex install $target_elixir"
     exit 1
   fi
 
