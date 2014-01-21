@@ -210,16 +210,19 @@ function kiex_implode() {
 }
 
 function self_update() {
-  if [ "$SYSTEM" = "Linux" ] ; then
-    mypath=$(dirname $(readlink -f $0))
-  elif [ "$SYSTEM" = "Darwin" ] ; then
-    mypath=$(dirname $(readlink_f $0))
-  else
-      echo "Unknown system $SYSTEM"
-      return 1
-  fi
+  # if [ "$SYSTEM" = "Linux" ] ; then
+  #   mypath=$(dirname $(readlink -f $0))
+  # elif [ "$SYSTEM" = "Darwin" ] ; then
+  #   mypath=$(dirname $(readlink_f $0))
+  # else
+  #     echo "Unknown system $SYSTEM"
+  #     return 1
+  # fi
 
-  cd $mypath
+  # cd $mypath
+
+  cd "$KIEX_HOME/bin"
+
   D=$(date +%Y%m%d.%H%M)
   cp kiex kiex.bak-$D
   if [ -d ../scripts ] ; then
