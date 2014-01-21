@@ -175,6 +175,14 @@ function create_kiex_env_script() {
 KIEX_HOME="$HOME/.kiex"
 export PATH=$KIEX_HOME/bin:$PATH
 [[ -f $KIEX_HOME/elixirs/.default ]] && source $KIEX_HOME/elixirs/.default
+
+function kiex() {
+  if [ "$1" = "use" ] ; then
+    eval "$($HOME/.kiex/bin/kiex $*|grep source)"
+  else
+    $HOME/.kiex/bin/kiex $*
+  fi
+}
 EOF
 }
 
