@@ -55,3 +55,6 @@ Upgrade kiex
 ### TODO
 
  * Add uninstall option for installed elixirs
+ * Maybe add dynamo install and setup for MIX_PATH
+   - how to tie to elixir used? gemset like?
+   - use dynamo tags?
