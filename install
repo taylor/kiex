@@ -50,6 +50,8 @@ fi
 mkdir -p "$KIEX_HOME/"{bin,builds,elixirs,scripts}
 curl -qs -o "$KIEX_HOME/bin/kiex" https://raw.github.com/taylor/kiex/master/kiex
 chmod +x "$KIEX_HOME/bin/kiex"
+#echo "$KIEX_HOME/bin/kiex" setup
+echo "Running initial environment setup"
 exec "$KIEX_HOME/bin/kiex" setup
 
 # function create_kiex_env_script() {
@@ -62,6 +64,6 @@ exec "$KIEX_HOME/bin/kiex" setup
 # 
 # create_kiex_env_script
 # 
-# echo "kiex has been installed in $KIEX_HOME"
-# echo "Add the following to your shell's config file (.bashrc/.zshrc):"
-# echo "    [[ -s \"\$HOME/.kiex/scripts/kiex\" ]] && source \"\$HOME/.kiex/scripts/kiex\""
+#echo "kiex has been installed in $KIEX_HOME"
+#echo "Add the following to your shell's config file (.bashrc/.zshrc):"
+#echo "    [[ -s \"\$HOME/.kiex/scripts/kiex\" ]] && source \"\$HOME/.kiex/scripts/kiex\""

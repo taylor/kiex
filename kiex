@@ -193,6 +193,10 @@ function setup() {
   chmod +x "$KIEX_HOME/bin/kiex"
 
   create_kiex_env_script
+
+  echo "kiex has been installed in $KIEX_HOME"
+  echo "Add the following to your shell's config file (.bashrc/.zshrc):"
+  echo "    [[ -s \"\$HOME/.kiex/scripts/kiex\" ]] && source \"\$HOME/.kiex/scripts/kiex\""
 }
 
 function kiex_implode() {
