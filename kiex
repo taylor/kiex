@@ -18,7 +18,7 @@ erlang_min_release_canidate_n=""
 SYSTEM=$(uname -s)
 
 if [ "$SYSTEM" = "Linux" ] ; then
-  if [ -z "$(which lsb_release)" ] ; then
+  if [ -z "$(which lsb_release 2> /dev/null)" ] ; then
     lsb_id=$(lsb_release -s -i)
     case $lsb_id in
       Ubuntu) DISTRO="Ubuntu" ;;
@@ -89,9 +89,9 @@ function readlink_f() {
 
 function check_erlang_release() {
   if [ "$SYSTEM" = "Linux" ] ; then
-    erlang_release_file="$(dirname $(readlink -f $(which erl)))/../releases/RELEASES"
+    erlang_release_file="$(dirname $(readlink -f $(which erl 2> /dev/null)))/../releases/RELEASES"
   elif [ "$SYSTEM" = "Darwin" ] ; then
-    erlang_release_file="$(dirname $(readlink_f $(which erl)))/../releases/RELEASES"
+    erlang_release_file="$(dirname $(readlink_f $(which erl 2> /dev/null)))/../releases/RELEASES"
   else
       echo "Unknown system $SYSTEM"
       return 1
@@ -407,7 +407,7 @@ function list_elixirs() {
     default_elixir="elixir-$(source $elixirs_path/.default ; echo $ELIXIR_VERSION)"
   fi
 
-  if [ -n "$(which iex)" ] ; then
+  if [ -n "$(which iex 2> /dev/null)" ] ; then
     v=$(iex --version 2> /dev/null|grep -v 'Warning: could not run')
     current_elixir="elixir-${v/Elixir /}"
   fi
