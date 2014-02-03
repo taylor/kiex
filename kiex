@@ -288,7 +288,9 @@ function install_elixir() {
   cd "$build_path"
   git clone https://github.com/elixir-lang/elixir.git elixir-git 2> /dev/null
   cd elixir-git
-  git checkout "v${version}"
+  git fetch -t
+  git checkout -f "v${version}"
+  git pull origin "v${version}"
   make clean compile
   mkdir -p "$install_path"
   make "PREFIX=$install_path" install
