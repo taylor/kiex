@@ -16,11 +16,10 @@ erlang_min_release_canidate="B"
 erlang_min_release_canidate_n=""
 
 SYSTEM=$(uname -s)
-USERSHELL=$(basename $SHELL)
 
 # Running bash -l from csh does not change $SHELL
-if [ "$USERSHELL" = "csh" -a "$(set | grep -c '^shell.*/csh')" = 0 ] ; then
- USERSHELL=bash 
+if [ -z "$USERSHELL" ] ; then
+  USERSHELL=$(basename $SHELL)
 fi
 
 if [ "$SYSTEM" = "Linux" ] ; then
@@ -227,7 +226,7 @@ export PATH=$KIEX_HOME/bin:$PATH
 function kiex() {
   if [ "$1" = "use" ] ; then
     #eval "$($HOME/.kiex/bin/kiex $*|grep source)"
-    source_line="$($HOME/.kiex/bin/kiex $*|grep source)"
+    source_line="$(USERSHELL=notcsh $HOME/.kiex/bin/kiex $*|grep source)"
     if [ -z "$source_line" ] ; then
       echo "Failed to use $*"
     else
