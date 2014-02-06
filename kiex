@@ -196,6 +196,7 @@ function deps_check() {
 
 # TODO: add csh/tcsh support.  test zsh support
 function create_kiex_env_script() {
+## Bash and Zsh
   cat <<"EOF"> "$KIEX_SCRIPTS_PATH/kiex"
 KIEX_HOME="$HOME/.kiex"
 export PATH=$KIEX_HOME/bin:$PATH
@@ -216,6 +217,16 @@ function kiex() {
     $HOME/.kiex/bin/kiex $*
   fi
 }
+EOF
+
+## CSH
+  cat <<"EOF"> "$KIEX_SCRIPTS_PATH/kiex.csh"
+set KIEX_HOME="$HOME/.kiex"
+setenv PATH "$KIEX_HOME/bin:$PATH"
+
+if ( -f $KIEX_HOME/elixirs/.default.csh ) then
+  source $KIEX_HOME/elixirs/.default.csh
+endif
 EOF
 }
 
@@ -350,12 +361,24 @@ function create_env_file() {
   if [ -f "$new_file" ] ; then
     mv -f "$new_file" "${new_file}.old"
   fi
+## Bash and Zsh
 cat <<EOF> $new_file
 export ELIXIR_VERSION="$new_ver"
 export PATH="${elixirs_source_path}/elixir-${new_ver}/bin:\$PATH"
 EOF
+
 #export MIX_PATH="${elixirs_source_path}/dynamo-${new_ver}/ebin:\$MIX_PATH"
 #export MIX_PATH="${elixirs_source_path}/elixir-${new_ver}/ebin:\$MIX_PATH"
+
+## CSH
+  new_file="${elixirs_path}/elixir-${new_ver}.env.csh"
+  if [ -f "$new_file" ] ; then
+    mv -f "$new_file" "${new_file}.old"
+  fi
+cat <<EOF> $new_file
+setenv ELIXIR_VERSION "$new_ver"
+setenv PATH "${elixirs_source_path}/elixir-${new_ver}/bin:\$PATH"
+EOF
 }
 
 function find_elixir_ver() {
@@ -432,12 +455,14 @@ function set_default_elixir() {
   if [ -e ${elixirs_path}/.default ] ; then 
     if [ -L ${elixirs_path}/.default ] ; then 
       rm ${elixirs_path}/.default
+      rm ${elixirs_path}/.default.csh
     else
       echo "The file ${elixirs_path}/.default should not exists! Fix and try again."
       exit 1
     fi
   fi
   ln -s "${elixirs_path}/${version}.env" "${elixirs_path}/.default"
+  ln -s "${elixirs_path}/${version}.env.csh" "${elixirs_path}/.default.csh"
   echo "Default Elixir version set to $version"
   #echo "Load right now with: kiex use $version"
 }
