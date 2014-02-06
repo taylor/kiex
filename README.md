@@ -1,29 +1,30 @@
-kiex
+kiex - Elixir version manager & builder
 ====
 
-elixir env mgr and builder thingy
+Kiex allows you to easily build and switch between different Elixir versions.
 
-Kiex allows you to easily build and switch between different elixir releases.
+It supports setting the default (global) Elixir version as well as per shell/project versions.
 
-It supports setting elixir version for global default, current shell, and starting a temporary subshell.
-
-It builds and installs elixir releases under ~/.kiex.
+Everything is self-contained under ~/.kiex.
 
 Usage is based *lightly* on [RVM](http://rvm.io) and [kerl](https://github.com/spawngrid/kerl).
 
 Alternatives:
- * exenv + elixir-build
- * edwb
+ * [exenv](https://github.com/mururu/exenv) + [elixir-build](https://github.com/mururu/elixir-build)
+ * [edwb](https://github.com/clutchanalytics/edwb)
 
 ### Install
 
 Prereqs: bash
 
-To install in $HOME/.kiex run the following:
+Run the following to get up and running:
 
 ```
 curl -qs https://raw.github.com/taylor/kiex/master/install | bash -s
 ```
+
+which will install in $HOME/.kiex.
+
 
 ### Usage
 
@@ -52,6 +53,42 @@ Uninstall kiex and elixirs
 Upgrade kiex
  * ``` kiex selfupdate ``` -- pull down latest updates for kiex
     - Can also re-curl
+
+### Design philosophy
+
+ * KISS
+ * Sane defaults
+ * Self-contained
+ * Single-purpose
+
+
+#### Comparison Q&A
+
+How is it like exenv (rbenv)?
+ * Super light and simple
+ * Focus on installing & managing one piece of software: Elixir
+
+How is it not like exenv?
+ * Does not use shims
+ * Includes elixir build component
+
+How is it like Kerl?
+ * Minimal command set
+ * Retrieves, builds, installs and manages different releases
+
+How is it not like Kerl?
+ * Not as flexible on install path
+ * Dynamically get's release list instead of caching
+ * Build and install actions are not separated
+
+How is it like RVM?
+ * Sane defaults
+ * Uses Unix PATH to manage binary to use
+
+How is it not like RVM? 
+ * No function over-loading
+ * Does not manage/install extra software and prereqs
+
 
 ### Platforms/Shells tested
 
@@ -86,12 +123,16 @@ Erlang installs:
 
 ### TODO
 
+ * Maybe print source line with use command
+ * Add active command (or similar) to show current elixir
+   - Already in list command - this would be the single version
+   - Maybe show source line?
+ * Add sourceline or similar command to show source line to use?
  * Add uninstall option for installed elixirs
  * Maybe add dynamo install and setup for MIX_PATH
    - how to tie to elixir used? gemset like?
    - use dynamo tags?
- * Look at elixir-build
- * 
+ * Look at elixir-build for ideas, collaboration
  
 ### License
 
