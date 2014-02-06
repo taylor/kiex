@@ -19,7 +19,7 @@ SYSTEM=$(uname -s)
 USERSHELL=$(basename $SHELL)
 
 # Running bash -l from csh does not change $SHELL
-if [ "$USERSHELL" = "csh" -a -n "$BASH" ] ; then
+if [ "$USERSHELL" = "csh" -a "$(set | grep -c '^shell.*/csh')" = 0 ] ; then
  USERSHELL=bash 
 fi
 
@@ -213,7 +213,7 @@ function create_kiex_env_script() {
   ## Generic loader
   cat <<"EOF"> "$KIEX_SCRIPTS_PATH/kiex"
 ## load correct version for this \$SHELL
-( ( env | grep '^SHELL=' | grep -qic '/csh$' ) && ( set | grep -qic '^BASH=' ; test $? -gt 0 ) ) \
+( ( env | grep '^SHELL=' | grep -qic '/csh$' ) && ( set | grep -qc '^BASH=' ; test $? -gt 0 ) ) \
   && source $HOME/.kiex/scripts/kiex.csh \
   || source $HOME/.kiex/scripts/kiex.bash
 EOF
