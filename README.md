@@ -1,9 +1,13 @@
 kiex
 ====
 
-elixir builder thingy
+elixir env mgr and builder thingy
 
-Builds and installs elixir releases under ~/.kiex.
+Kiex allows you to easily build and switch between different elixir releases.
+
+It supports setting elixir version for global default, current shell, and starting a temporary subshell.
+
+It builds and installs elixir releases under ~/.kiex.
 
 Usage is based *lightly* on [RVM](http://rvm.io) and [kerl](https://github.com/spawngrid/kerl).
 
