@@ -16,6 +16,7 @@ erlang_min_release_canidate="B"
 erlang_min_release_canidate_n=""
 
 SYSTEM=$(uname -s)
+USERSHELL=$(basename $SHELL)
 
 if [ "$SYSTEM" = "Linux" ] ; then
   if [ -z "$(which lsb_release 2> /dev/null)" ] ; then
@@ -200,7 +201,7 @@ function create_kiex_env_script() {
 ## Generic loader
   cat <<"EOF"> "$KIEX_SCRIPTS_PATH/kiex"
 ## load correct version for this \$SHELL
-( env | grep SHELL= | grep -ic '/csh$' ) && source $HOME/.kiex/scripts/kiex.csh  || source $HOME/.kiex/scripts/kiex.bash
+( env | grep SHELL= | grep -qic '/csh$' ) && source $HOME/.kiex/scripts/kiex.csh  || source $HOME/.kiex/scripts/kiex.bash
 EOF
 
 ## Bash and Zsh
@@ -435,7 +436,11 @@ function use_elixir() {
 
   echo "To switch elixir versions for your current shell run: "
   printf "%b" "   "
-  printf "%b" "source ${elixirs_source_path}/${version}.env\n"
+  if [ "$USERSHELL" = "csh" ] ; then
+    printf "%b" "source ${elixirs_source_path}/${version}.env.csh\n"
+  else
+    printf "%b" "source ${elixirs_source_path}/${version}.env\n"
+  fi
 }
 
 function elixir_subshell() {
