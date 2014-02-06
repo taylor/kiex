@@ -194,6 +194,7 @@ function deps_check() {
   if [ "$error" = 1 ] ; then false ; else true ; fi
 }
 
+# TODO: add csh/tcsh support.  test zsh support
 function create_kiex_env_script() {
   cat <<"EOF"> "$KIEX_SCRIPTS_PATH/kiex"
 KIEX_HOME="$HOME/.kiex"
@@ -277,7 +278,7 @@ function self_update() {
   #curl -qs -o kiex "$kiex_url"
   #chmod +x kiex
   #echo "kiex installed in $mypath is now updated"
-  echo "kiex installed in $KIEX_HOME is now updated"
+  echo "kiex installed in $KIEX_HOME is now updated ☺ "
 }
 
 function get_known_elixir_releases() {
