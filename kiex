@@ -196,8 +196,15 @@ function deps_check() {
 
 # TODO: add csh/tcsh support.  test zsh support
 function create_kiex_env_script() {
-## Bash and Zsh
+
+## Generic loader
   cat <<"EOF"> "$KIEX_SCRIPTS_PATH/kiex"
+## load correct version for this \$SHELL
+( env | grep SHELL= | grep -ic '/csh$' ) && source $HOME/.kiex/scripts/kiex.csh  || source $HOME/.kiex/scripts/kiex.bash
+EOF
+
+## Bash and Zsh
+  cat <<"EOF"> "$KIEX_SCRIPTS_PATH/kiex.bash"
 KIEX_HOME="$HOME/.kiex"
 export PATH=$KIEX_HOME/bin:$PATH
 [[ -f $KIEX_HOME/elixirs/.default ]] && source $KIEX_HOME/elixirs/.default
@@ -246,11 +253,7 @@ function setup() {
   if [ ! "$quiet" = 1 ] ; then
     echo "kiex has been installed in $KIEX_HOME"
     echo "Add the following to your shell's config file (.bashrc/.zshrc/.cshrc):"
-    if [ "$(basename $SHELL)" = "csh" ] ; then
-      echo "    if ( -s \"\$HOME/.kiex/scripts/kiex.csh\" ) then source \"\$HOME/.kiex/scripts/kiex.csh\" ; endif"
-    else
-      echo "    [[ -s \"\$HOME/.kiex/scripts/kiex\" ]] && source \"\$HOME/.kiex/scripts/kiex\""
-    fi
+    echo "    test -s \"\$HOME/.kiex/scripts/kiex\" && source \"\$HOME/.kiex/scripts/kiex\""
   fi
 }
 
@@ -264,7 +267,9 @@ function kiex_implode() {
 
   rm -rf "$HOME/.kiex"
 
-  echo "Please remove the kiex source lines from your startup script.  It looks like:"
+  echo "You can now remove the kiex source lines from your startup script.  It looks like:"
+  echo "    test -s \"\$HOME/.kiex/scripts/kiex\" && source \"\$HOME/.kiex/scripts/kiex\""
+  echo "    or"
   echo "    [[ -s \"\$HOME/.kiex/scripts/kiex\" ]] && source \"\$HOME/.kiex/scripts/kiex\""
 }
 
