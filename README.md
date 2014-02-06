@@ -11,7 +11,13 @@ It builds and installs elixir releases under ~/.kiex.
 
 Usage is based *lightly* on [RVM](http://rvm.io) and [kerl](https://github.com/spawngrid/kerl).
 
+Alternatives:
+ * exenv + elixir-build
+ * edwb
+
 ### Install
+
+Prereqs: bash
 
 To install in $HOME/.kiex run the following:
 
@@ -47,6 +53,28 @@ Upgrade kiex
  * ``` kiex selfupdate ``` -- pull down latest updates for kiex
     - Can also re-curl
 
+### Platforms/Shells tested
+
+Operating Systems:
+ * Arch
+ * CentOS
+ * Debian
+ * FreeBSD
+ * OS X/Darwin
+ * Ubuntu
+
+Shells:
+ * bash
+ * csh
+ * tcsh
+ * zsh
+
+Erlang installs:
+ * erlang-solutions
+ * erlang.org
+ * kerl
+ * Debian apt, FreeBSD pkg, OS X brew
+
 ### Limitations
 
  * Does not build erlang
@@ -62,3 +90,9 @@ Upgrade kiex
  * Maybe add dynamo install and setup for MIX_PATH
    - how to tie to elixir used? gemset like?
    - use dynamo tags?
+ * Look at elixir-build
+ * 
+ 
+### License
+
+See [LICENSE file](LICENSE)
