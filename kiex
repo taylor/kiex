@@ -262,6 +262,22 @@ function setup() {
 
   create_kiex_env_script
 
+  typeset elixirs
+
+  elixirs=($(
+    cd "$elixirs_path"
+    find . -maxdepth 1 -mindepth 1 -type d 2> /dev/null | sort
+    ))
+
+  for version in "${elixirs[@]//.\/}"
+  do
+    if [[ ! -x "$elixirs_path/$version/bin/elixir" ]]
+    then
+      continue
+    fi
+    create_env_file "$version"
+  done
+
   if [ ! "$quiet" = 1 ] ; then
     echo "kiex has been installed in $KIEX_HOME"
     echo "Add the following to your shell's config file (.bashrc/.zshrc/.cshrc):"
@@ -385,6 +401,7 @@ function install_elixir() {
   echo "           kiex use elixir-${version} "
   echo "or load the elixir environment file with: "
   printf "%b" "   "
+  # TODO: handle csh... look at split files or something...
   printf "%b" "source ${elixirs_source_path}/elixir-${version}.env\n"
 }
 
@@ -402,11 +419,12 @@ export ELIXIR_VERSION="$new_ver"
 export PATH="${elixirs_source_path}/elixir-${new_ver}/bin:\$PATH"
 EOF
 
+# TODO: add MIX_PATH maybe?
 #export MIX_PATH="${elixirs_source_path}/dynamo-${new_ver}/ebin:\$MIX_PATH"
 #export MIX_PATH="${elixirs_source_path}/elixir-${new_ver}/ebin:\$MIX_PATH"
 
 ## CSH
-  new_file="${elixirs_path}/elixir-${new_ver}.env.csh"
+  new_file="${elixirs_path}/.elixir-${new_ver}.env.csh"
   if [ -f "$new_file" ] ; then
     mv -f "$new_file" "${new_file}.old"
   fi
@@ -462,7 +480,7 @@ function use_elixir() {
   echo "To switch elixir versions for your current shell run: "
   printf "%b" "   "
   if [ "$USERSHELL" = "csh" ] ; then
-    printf "%b" "source ${elixirs_source_path}/${version}.env.csh\n"
+    printf "%b" "source ${elixirs_source_path}/.${version}.env.csh\n"
   else
     printf "%b" "source ${elixirs_source_path}/${version}.env\n"
   fi
@@ -501,7 +519,7 @@ function set_default_elixir() {
     fi
   fi
   ln -s "${elixirs_path}/${version}.env" "${elixirs_path}/.default"
-  ln -s "${elixirs_path}/${version}.env.csh" "${elixirs_path}/.default.csh"
+  ln -s "${elixirs_path}/.${version}.env.csh" "${elixirs_path}/.default.csh"
   echo "Default Elixir version set to $version"
   #echo "Load right now with: kiex use $version"
 }
