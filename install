@@ -37,24 +37,35 @@ else
   exit 1
 fi
 
-REALKIEX=$(which kiex > /dev/null 2>&1)
-if [ "$?" = 0 ] ; then
-  UPGRADE=1
-else
-  UPGRADE=0
-fi
+# REALKIEX=$(which kiex > /dev/null 2>&1)
+# if [ "$?" = 0 ] ; then
+#   UPGRADE=1
+# else
+#   UPGRADE=0
+# fi
 
 
-if [ -f "$KIEX_HOME/bin/kiex" ] ; then
+UPGRADE=0
+UPDATE=0
+if [ "$1" = "upgrade" -a -f "$KIEX_HOME/bin/kiex" ] ; then
   UPGRADE=1
+elif [ "$1" = "update" -a -f "$KIEX_HOME/bin/kiex" ] ; then
+  UPDATE=1
 fi
 
 mkdir -p "$KIEX_HOME/"{bin,builds,elixirs,scripts}
 curl -qs -o "$KIEX_HOME/bin/kiex" https://raw.github.com/taylor/kiex/master/kiex
 chmod +x "$KIEX_HOME/bin/kiex"
 #echo "$KIEX_HOME/bin/kiex" setup
-echo "Running initial environment setup"
-exec "$KIEX_HOME/bin/kiex" setup
+if [ $UPDATE = 1 ] ; then
+  exec "$KIEX_HOME/bin/kiex" selfupdate
+  #exec "$KIEX_HOME/bin/kiex" setup update
+elif [ $UPGRADE = 1 ] ; then
+  exec "$KIEX_HOME/bin/kiex" setup upgrade
+else
+  echo "Running initial environment setup"
+  exec "$KIEX_HOME/bin/kiex" setup
+fi
 
 # function create_kiex_env_script() {
 #   cat <<"EOF"> "$KIEX_SCRIPTS_PATH/kiex"
