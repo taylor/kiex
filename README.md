@@ -7,11 +7,7 @@ It supports setting the default (global) Elixir version as well as per shell/pro
 
 Everything is self-contained under ~/.kiex.
 
-Usage is based *lightly* on [RVM](http://rvm.io) and [kerl](https://github.com/spawngrid/kerl).
-
-Alternatives:
- * [exenv](https://github.com/mururu/exenv) + [elixir-build](https://github.com/mururu/elixir-build)
- * [edwb](https://github.com/clutchanalytics/edwb)
+Usage is based *lightly* on [RVM](http://rvm.io), [kerl](https://github.com/spawngrid/kerl), and [rbenv](https://github.com/sstephenson/rbenv).  
 
 ### Install
 
@@ -27,7 +23,6 @@ which will install in $HOME/.kiex.
 
 
 ### Usage
-
 
 List installed versions
  * ``` kiex list ```
@@ -111,6 +106,22 @@ Erlang installs:
  * erlang.org
  * kerl
  * Debian apt, FreeBSD pkg, OS X brew
+
+
+### Alternatives and References
+
+Alternatives:
+ * [exenv](https://github.com/mururu/exenv) + [elixir-build](https://github.com/mururu/elixir-build)
+ * [edwb](https://github.com/clutchanalytics/edwb)
+
+Related tools:
+ * [kerl](https://github.com/spawngrid/kerl) - Easy building and installing of Erlang/OTP instances
+ * [kex](https://github.com/d0rc/kex) - Build any tagged release of Erlang/OTP or Elixir from git
+ * [heroku-buildpack-elixir](https://github.com/goshakkk/heroku-buildpack-elixir) - Elixir buildpack for Heroku
+   - [heroku-buildpack-erlang](https://github.com/archaelus/heroku-buildpack-erlang) - Erlang/OTP buildpack for Heroku
+ * [erln8](https://github.com/metadave/erln8) - Erlang/OTP version manager (builds from git source)
+ * [robisonsantos/evm](https://github.com/robisonsantos/evm) - Erlang Version Manager (from erlang.org tarballs)
+
 
 ### Limitations
 
