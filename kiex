@@ -219,6 +219,11 @@ EOF
 }
 
 function setup() {
+  quiet=0
+  if [ "$1" = "quiet" ] ; then
+    quiet=1
+  fi
+
   mkdir -p "$KIEX_HOME/"{bin,builds,elixirs,scripts}
   #curl -qs -o "$KIEX_HOME/bin/kiex" https://raw.github.com/taylor/kiex/master/kiex
   curl -qs -o "$KIEX_HOME/bin/kiex" "$kiex_url"
@@ -226,9 +231,11 @@ function setup() {
 
   create_kiex_env_script
 
-  echo "kiex has been installed in $KIEX_HOME"
-  echo "Add the following to your shell's config file (.bashrc/.zshrc):"
-  echo "    [[ -s \"\$HOME/.kiex/scripts/kiex\" ]] && source \"\$HOME/.kiex/scripts/kiex\""
+  if [ ! "$quiet" ] ; then
+    echo "kiex has been installed in $KIEX_HOME"
+    echo "Add the following to your shell's config file (.bashrc/.zshrc):"
+    echo "    [[ -s \"\$HOME/.kiex/scripts/kiex\" ]] && source \"\$HOME/.kiex/scripts/kiex\""
+  fi
 }
 
 function kiex_implode() {
@@ -265,7 +272,7 @@ function self_update() {
     cp ../scripts/kiex ../scripts/kiex.bak-$D
   fi
 
-  setup
+  setup quiet
 
   #curl -qs -o kiex "$kiex_url"
   #chmod +x kiex
