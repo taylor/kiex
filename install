@@ -27,6 +27,8 @@ if [ "$SYSTEM" = "Linux" ] ; then
   else
     echo "Unknown Linux distribution"
   fi
+elif [ "$SYSTEM" = "FreeBSD" ] ; then
+  DISTRO=FreeBSD
 elif [ "$SYSTEM" = "Darwin" ] ; then
   #DISTRO=$(uname -r)
   DISTRO=OSX
