@@ -275,7 +275,7 @@ function setup() {
     then
       continue
     fi
-    create_env_file "$version"
+    create_env_file "${version/elixir-/}"
   done
 
   if [ ! "$quiet" = 1 ] ; then
