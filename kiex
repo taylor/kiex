@@ -208,6 +208,7 @@ function kiex() {
       echo "Failed to use $*"
     else
       eval "$source_line"
+      shift
       echo "Using $*"
     fi
   else
@@ -430,7 +431,7 @@ function set_default_elixir() {
   fi
   ln -s "${elixirs_path}/${version}.env" "${elixirs_path}/.default"
   echo "Default Elixir version set to $version"
-  echo "Load right now with: source $elixirs_source_path/.default"
+  #echo "Load right now with: kiex use $version"
 }
 
 function list_elixirs() {
