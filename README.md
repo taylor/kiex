@@ -49,6 +49,10 @@ Upgrade kiex
  * ``` kiex selfupdate ``` -- pull down latest updates for kiex
     - Can also re-curl
 
+
+<script type="text/javascript" src="https://asciinema.org/a/7523.js" id="asciicast-7523" async></script>
+
+
 ### Design philosophy
 
  * KISS
