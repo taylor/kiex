@@ -506,7 +506,8 @@ function elixir_subshell() {
 
   echo "Starting sub-shell with elixir version $version"
   source "${elixirs_path}/${version}.env"
-  exec $SHELL -l
+  # NOTE: Using a login shell will use a default kiex elixir...
+  exec $SHELL
 }
 
 function set_default_elixir() {
