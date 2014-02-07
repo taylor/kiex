@@ -1,4 +1,4 @@
-kiex - Elixir version manager & builder
+kiex - Elixir version manager
 ====
 
 Kiex allows you to easily build and switch between different Elixir versions.
