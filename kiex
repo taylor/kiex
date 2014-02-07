@@ -342,13 +342,13 @@ function kiex_implode() {
     exit 0
   fi
 
-  if [ -f "$KIEX_HOME" ] ; then
+  if [ -d "$KIEX_HOME" ] ; then
     rm -rf "$KIEX_HOME"
   fi
 
   echo "You can now remove the kiex source lines from your startup script.  It looks like:"
   echo "    test -s \"\$HOME/.kiex/scripts/kiex\" && source \"\$HOME/.kiex/scripts/kiex\""
-  echo "    or"
+  echo " or"
   echo "    [[ -s \"\$HOME/.kiex/scripts/kiex\" ]] && source \"\$HOME/.kiex/scripts/kiex\""
 }
 
