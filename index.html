@@ -1,0 +1,241 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Kiex by taylor</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Kiex</h1>
+        <p>Elixir version manager and builder</p>
+        <p class="view"><a href="https://github.com/taylor/kiex">View the Project on GitHub <small>taylor/kiex</small></a></p>
+        <ul>
+          <li><a href="https://github.com/taylor/kiex/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/taylor/kiex/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/taylor/kiex">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <p>Kiex allows you to easily build and switch between different Elixir versions.</p>
+
+<p>It supports setting the default (global) Elixir version as well as per shell/project versions.</p>
+
+<p>Everything is self-contained under ~/.kiex.</p>
+
+<p>Usage is based <em>lightly</em> on <a href="http://rvm.io">RVM</a>, <a href="https://github.com/spawngrid/kerl">kerl</a>, and <a href="https://github.com/sstephenson/rbenv">rbenv</a>.  </p>
+
+<h3>
+<a name="install" class="anchor" href="#install"><span class="octicon octicon-link"></span></a>Install</h3>
+
+<p>Prereqs: bash</p>
+
+<p>Run the following to get up and running:</p>
+
+<pre><code>curl -qs https://raw.github.com/taylor/kiex/master/install | bash -s
+</code></pre>
+
+<p>which will install in $HOME/.kiex.</p>
+
+<h3>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h3>
+
+<p>List installed versions</p>
+
+<ul>
+<li><code>kiex list</code></li>
+</ul><p>List known releases</p>
+
+<ul>
+<li>
+<code>kiex list known</code>  (or <code>kiex list releases</code>)</li>
+</ul><p>Install a known release</p>
+
+<ul>
+<li><code>kiex install 0.11.2</code></li>
+</ul><p>Use specific elixir version</p>
+
+<ul>
+<li>
+<code>kiex use 0.11.2</code> -- Sets the elixir version for current shell.</li>
+</ul><p>Use sub-shell with specific elixir version</p>
+
+<ul>
+<li>
+<code>kiex shell 0.11.2</code> -- Starts sub-shell with given elixir version.  Exiting shell goes to default.</li>
+</ul><p>Set default elixir version</p>
+
+<ul>
+<li><code>kiex default 0.11.2</code></li>
+</ul><p>Uninstall kiex and elixirs</p>
+
+<ul>
+<li>
+<code>kiex implode</code> -- This removes all versions of elixir installed by kiex as well as all kiex components</li>
+</ul><p>Upgrade kiex</p>
+
+<ul>
+<li>
+<code>kiex selfupdate</code> -- pull down latest updates for kiex
+
+<ul>
+<li>Can also re-curl</li>
+</ul>
+</li>
+</ul><h3>
+<a name="design-philosophy" class="anchor" href="#design-philosophy"><span class="octicon octicon-link"></span></a>Design philosophy</h3>
+
+<ul>
+<li>KISS</li>
+<li>Sane defaults</li>
+<li>Self-contained</li>
+<li>Single-purpose</li>
+</ul><h4>
+<a name="comparison-qa" class="anchor" href="#comparison-qa"><span class="octicon octicon-link"></span></a>Comparison Q&amp;A</h4>
+
+<p>How is it like exenv (rbenv)?</p>
+
+<ul>
+<li>Super light and simple</li>
+<li>Focus on installing &amp; managing one piece of software: Elixir</li>
+</ul><p>How is it not like exenv?</p>
+
+<ul>
+<li>Does not use shims</li>
+<li>Includes elixir build component</li>
+</ul><p>How is it like Kerl?</p>
+
+<ul>
+<li>Minimal command set</li>
+<li>Retrieves, builds, installs and manages different releases</li>
+</ul><p>How is it not like Kerl?</p>
+
+<ul>
+<li>Not as flexible on install path</li>
+<li>Dynamically get's release list instead of caching</li>
+<li>Build and install actions are not separated</li>
+</ul><p>How is it like RVM?</p>
+
+<ul>
+<li>Sane defaults</li>
+<li>Uses Unix PATH to manage binary to use</li>
+</ul><p>How is it not like RVM? </p>
+
+<ul>
+<li>No function over-loading</li>
+<li>Does not manage/install extra software and prereqs</li>
+</ul><h3>
+<a name="platformsshells-tested" class="anchor" href="#platformsshells-tested"><span class="octicon octicon-link"></span></a>Platforms/Shells tested</h3>
+
+<p>Operating Systems:</p>
+
+<ul>
+<li>Arch</li>
+<li>CentOS</li>
+<li>Debian</li>
+<li>FreeBSD</li>
+<li>OS X/Darwin</li>
+<li>Ubuntu</li>
+</ul><p>Shells:</p>
+
+<ul>
+<li>bash</li>
+<li>csh</li>
+<li>tcsh</li>
+<li>zsh</li>
+</ul><p>Erlang installs:</p>
+
+<ul>
+<li>erlang-solutions</li>
+<li>erlang.org</li>
+<li>kerl</li>
+<li>Debian apt, FreeBSD pkg, OS X brew</li>
+</ul><h3>
+<a name="alternatives-and-references" class="anchor" href="#alternatives-and-references"><span class="octicon octicon-link"></span></a>Alternatives and References</h3>
+
+<p>Alternatives:</p>
+
+<ul>
+<li>
+<a href="https://github.com/mururu/exenv">exenv</a> + <a href="https://github.com/mururu/elixir-build">elixir-build</a>
+</li>
+<li><a href="https://github.com/clutchanalytics/edwb">edwb</a></li>
+</ul><p>Related tools:</p>
+
+<ul>
+<li>
+<a href="https://github.com/spawngrid/kerl">kerl</a> - Easy building and installing of Erlang/OTP instances</li>
+<li>
+<a href="https://github.com/d0rc/kex">kex</a> - Build any tagged release of Erlang/OTP or Elixir from git</li>
+<li>
+<a href="https://github.com/goshakkk/heroku-buildpack-elixir">heroku-buildpack-elixir</a> - Elixir buildpack for Heroku
+
+<ul>
+<li>
+<a href="https://github.com/archaelus/heroku-buildpack-erlang">heroku-buildpack-erlang</a> - Erlang/OTP buildpack for Heroku</li>
+</ul>
+</li>
+<li>
+<a href="https://github.com/metadave/erln8">erln8</a> - Erlang/OTP version manager (builds from git source)</li>
+<li>
+<a href="https://github.com/robisonsantos/evm">robisonsantos/evm</a> - Erlang Version Manager (from erlang.org tarballs)</li>
+</ul><h3>
+<a name="limitations" class="anchor" href="#limitations"><span class="octicon octicon-link"></span></a>Limitations</h3>
+
+<ul>
+<li>Does not build erlang</li>
+<li>Does not build Dynamo or any other elixir app</li>
+<li>Same build directory used for every build (saving space vs keeping build env around)</li>
+<li>No uninstall option for installed elixir versions</li>
+<li>No per-directory/project config file.
+
+<ul>
+<li>You can hack it in by adding kiex use  to .rvmrc or friends ;P</li>
+</ul>
+</li>
+</ul><h3>
+<a name="todo" class="anchor" href="#todo"><span class="octicon octicon-link"></span></a>TODO</h3>
+
+<ul>
+<li>Maybe print source line with use command</li>
+<li>Add active command (or similar) to show current elixir
+
+<ul>
+<li>Already in list command - this would be the single version</li>
+<li>Maybe show source line?</li>
+</ul>
+</li>
+<li>Add sourceline or similar command to show source line to use?</li>
+<li>Add uninstall option for installed elixirs</li>
+<li>Maybe add dynamo install and setup for MIX_PATH
+
+<ul>
+<li>how to tie to elixir used? gemset like?</li>
+<li>use dynamo tags?</li>
+</ul>
+</li>
+<li>Look at elixir-build for ideas, collaboration</li>
+</ul><h3>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h3>
+
+<p>See <a href="LICENSE">LICENSE file</a></p>
+      </section>
+    </div>
+    <footer>
+      <p>Project maintained by <a href="https://github.com/taylor">taylor</a></p>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
