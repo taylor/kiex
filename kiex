@@ -352,6 +352,25 @@ function kiex_implode() {
   echo "    [[ -s \"\$HOME/.kiex/scripts/kiex\" ]] && source \"\$HOME/.kiex/scripts/kiex\""
 }
 
+
+function get_elixir_branches() {
+  x=$(curl -H "Accept: application/json" -qs https://api.github.com/repos/elixir-lang/elixir/branches |grep '"name":')
+  x=${x//\"name\":/}
+  x=${x//[\",]/}
+  x=${x//v/}
+
+  echo "$x"
+}
+
+function list_branches() {
+  echo "Getting the available branches from https://github.com/elixir-lang/elixir/branches"
+  echo
+  elixir_branches=$(get_elixir_branches)
+
+  echo "Current Elixir branches: "
+  printf "%b" "${elixir_branches}\n"
+}
+
 function get_known_elixir_releases() {
   x=$(curl -H "Accept: application/json" -qs https://api.github.com/repos/elixir-lang/elixir/releases |grep '"tag_name":')
   x=${x//\"tag_name\":/}
@@ -641,6 +660,9 @@ case $action in
     elif [ "$1" = "known" -o "$1" = "releases" ]
     then
       list_known
+    elif [ "$1" = "branches" ]
+    then
+      list_branches
     else
       usage
       exit 1
