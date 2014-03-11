@@ -380,12 +380,7 @@ function kiex_implode() {
 
 function get_elixir_branches() {
   # TODO: add cache support
-  # x=$(curl -i -H "User-Agent: $USER_AGENT" -H "Accept: application/json" -qs https://api.github.com/repos/elixir-lang/elixir/branches |grep '"name":|ETag:')
-  x=$(curl -i -H "User-Agent: $USER_AGENT" -H "Accept: application/json" -qs https://api.github.com/repos/elixir-lang/elixir/branches |grep '"name":')
-  x=${x//\"name\":/}
-  x=${x//[\",]/}
-  x=${x//v/}
-
+  x=$(curl -i -H "User-Agent: $USER_AGENT" -H "Accept: application/json" -qs https://api.github.com/repos/elixir-lang/elixir/branches | grep "name" | python -mjson.tool | grep "name" | sed -E 's/        "name": "(.*)"/\1/')
   echo "$x"
 }
 
