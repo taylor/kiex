@@ -15,6 +15,7 @@ USER_AGENT="taylor-kiex-elixir-installer"
 
 if [ "$1" = "install" ] ; then
   ver="$2"
+  ver=${ver//v/}
   minor=${ver/[0-9]*./}
   if (( $minor > 12 )) ; then
     need_erl_17=1
@@ -382,9 +383,10 @@ function get_elixir_branches() {
   # TODO: add cache support
   # x=$(curl -i -H "User-Agent: $USER_AGENT" -H "Accept: application/json" -qs https://api.github.com/repos/elixir-lang/elixir/branches |grep '"name":|ETag:')
   x=$(curl -i -H "User-Agent: $USER_AGENT" -H "Accept: application/json" -qs https://api.github.com/repos/elixir-lang/elixir/branches |grep '"name":')
-  x=${x//\"name\":/}
-  x=${x//[\",]/}
-  x=${x//v/}
+  x=$(echo $x | tr ',' '\n' |grep name\":|sed 's/.*name":"\([^"]*\)"/\1/')
+  #x=${x//\"name\":/}
+  #x=${x//[\",]/}
+  #x=${x//v/}
 
   echo "$x"
 }
@@ -481,8 +483,14 @@ function install_elixir() {
   git checkout -f master
   git fetch -t
   # TODO: deal with conflicts between branches and tags
-  git checkout -f "v${version}"
-  git pull origin "v${version}"
+  git branch -la |grep -q "origin/${version}"
+  if [ "$?" = 0 ] ; then
+    git checkout -f "${version}"
+    git pull origin "${version}"
+  else
+    git checkout -f "v${version}"
+    git pull origin "v${version}"
+  fi
   if [ "$SYSTEM" = "FreeBSD" ] ; then
     MAKE=gmake
   else
