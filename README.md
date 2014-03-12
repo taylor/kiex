@@ -11,7 +11,7 @@ Usage is based *lightly* on [RVM](http://rvm.io), [kerl](https://github.com/spaw
 
 ### Install
 
-Prereqs: bash
+Prereqs: bash, curl, git
 
 Run the following to get up and running:
 
