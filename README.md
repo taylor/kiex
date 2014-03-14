@@ -30,17 +30,20 @@ List installed versions
 List known releases
  * ``` kiex list known ```  (or ``` kiex list releases ```)
 
-Install a known release
- * ``` kiex install 0.11.2 ```
+List current branches
+ * ``` kiex list branches ```
+
+Install a known release or branch
+ * ``` kiex install 0.12.5 ``` or ``` kiex install stable ```
 
 Use specific elixir version
- * ``` kiex use 0.11.2 ``` -- Sets the elixir version for current shell.
+ * ``` kiex use 0.12.5 ``` -- Sets the elixir version for current shell.
 
 Use sub-shell with specific elixir version
- * ``` kiex shell 0.11.2 ``` -- Starts sub-shell with given elixir version.  Exiting shell goes to default.
+ * ``` kiex shell 0.12.5 ``` -- Starts sub-shell with given elixir version.  Exiting shell goes to default.
 
 Set default elixir version
- * ``` kiex default 0.11.2 ```
+ * ``` kiex default 0.12.5 ```
 
 Uninstall kiex and elixirs
  * ``` kiex implode ``` -- This removes all versions of elixir installed by kiex as well as all kiex components
