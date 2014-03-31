@@ -498,6 +498,13 @@ function install_elixir() {
   $MAKE clean compile
   mkdir -p "$install_path"
   $MAKE "PREFIX=$install_path" install
+
+  if [ ! "$?" = 0 ] ; then
+    echo "Problem with Elixir build.  Aborting!"
+    echo "Please report via https://github.com/taylor/kiex/issues/new"
+    exit 1
+  fi
+
   echo "Installed Elixir version $version"
   create_env_file "$version"
 
