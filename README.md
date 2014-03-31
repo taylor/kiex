@@ -138,6 +138,7 @@ Related tools:
 
 ### TODO
 
+ * Merge install script into kiex script as an install function
  * Maybe print source line with use command
  * Add active command (or similar) to show current elixir
    - Already in list command - this would be the single version
