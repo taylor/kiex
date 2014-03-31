@@ -42,13 +42,14 @@ if [ -z "$USERSHELL" ] ; then
 fi
 
 if [ "$SYSTEM" = "Linux" ] ; then
-  if [ -z "$(which lsb_release 2> /dev/null)" ] ; then
+  if [ -n "$(which lsb_release 2> /dev/null)" ] ; then
     lsb_id=$(lsb_release -s -i)
     case $lsb_id in
       Ubuntu) DISTRO="Ubuntu" ;;
       Centos) DISTRO="Centos" ;;
       Gentoo) DISTRO="Gentoo" ;;
       Arch)   DISTRO="Arch" ;;
+      Fedora) DISTRO="Fedora" ;;
       *) DISTRO="$lsb_id" ;;
     esac
   elif [ "$(grep -ic Ubuntu /etc/issue)" = 1 ] ; then
@@ -57,8 +58,6 @@ if [ "$SYSTEM" = "Linux" ] ; then
     DISTRO=Centos
   elif [ "$([[ -f /etc/inittab ]] && grep -ic Gentoo /etc/inittab)" = 3 ] ; then
     DISTRO=Gentoo
-  elif [ "$(grep -ic DISTRIB_ID=Arch /etc/lsb-release)" = 1 ] ; then
-    DISTRO=Arch
   else
     echo "Unknown Linux distribution"
   fi
