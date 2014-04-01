@@ -9,7 +9,7 @@ Everything is self-contained under ~/.kiex.
 
 Usage is based *lightly* on [RVM](http://rvm.io), [kerl](https://github.com/spawngrid/kerl), and [rbenv](https://github.com/sstephenson/rbenv).
 
-*NOTE:* Some Erlang source builds are broken.  See below.
+*NOTE:* Some Erlang source builds are broken.  [See below](#notes).
 
 ### Install
 
@@ -114,6 +114,7 @@ Erlang installs:
  * Debian apt, FreeBSD pkg, OS X brew
 
 
+< name="notes">
 ### Notes
 
 Some erlang builds (including default kerl) are unusuable on current CentOS and Fedora distros as a result of an OpenSSL update.  -- 2014/03/31
