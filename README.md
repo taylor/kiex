@@ -113,20 +113,6 @@ Erlang installs:
  * kerl
  * Debian apt, FreeBSD pkg, OS X brew
 
-
-< name="notes">
-### Notes
-
-Some erlang builds (including default kerl) are unusuable on current CentOS and Fedora distros as a result of an OpenSSL update.  -- 2014/03/31
-
-Various bugs reported:
-  * https://bugzilla.redhat.com/show_bug.cgi?id=1023017
-  * https://groups.google.com/forum/#!topic/erlang-programming/wW6Uuz4VO2w
-  * https://github.com/basho/rebar/issues/375
-  * https://bugs.ruby-lang.org/issues/9065
-
-A update to OTP crypto https://github.com/RoadRunnr/otp/commit/8837c1be2ba8a3c123df3f5a87003daa9aac6539
-
 ### Alternatives and References
 
 Alternatives:
@@ -150,6 +136,19 @@ Related tools:
  * No uninstall option for installed elixir versions
  * No per-directory/project config file.
    - You can hack it in by adding kiex use <version> to .rvmrc or friends ;P
+
+< name="notes">
+### Notes
+
+Some erlang builds (including default kerl) are unusuable on current CentOS and Fedora distros as a result of an OpenSSL update.  -- 2014/03/31
+
+Various bugs reported:
+  * https://bugzilla.redhat.com/show_bug.cgi?id=1023017
+  * https://groups.google.com/forum/#!topic/erlang-programming/wW6Uuz4VO2w
+  * https://github.com/basho/rebar/issues/375
+  * https://bugs.ruby-lang.org/issues/9065
+
+A update to OTP crypto https://github.com/RoadRunnr/otp/commit/8837c1be2ba8a3c123df3f5a87003daa9aac6539
 
 ### TODO
 
