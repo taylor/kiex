@@ -53,7 +53,7 @@ elif [ "$1" = "update" -a -f "$KIEX_HOME/bin/kiex" ] ; then
 fi
 
 mkdir -p "$KIEX_HOME/"{bin,builds,elixirs,scripts}
-curl -qs -o "$KIEX_HOME/bin/kiex" https://raw.githubusercontent.com/taylor/kiex/master/kiex
+curl -Lqs -o "$KIEX_HOME/bin/kiex" https://raw.githubusercontent.com/taylor/kiex/master/kiex
 chmod +x "$KIEX_HOME/bin/kiex"
 #echo "$KIEX_HOME/bin/kiex" setup
 if [ $UPDATE = 1 ] ; then

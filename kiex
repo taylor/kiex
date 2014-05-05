@@ -4,7 +4,7 @@ base_path="$HOME/.kiex"
 build_path="${base_path}/builds"
 elixirs_path="${base_path}/elixirs"
 elixirs_source_path="\$HOME/.kiex/elixirs"
-kiex_url="https://raw.github.com/taylor/kiex/master/kiex"
+kiex_url="https://raw.githubusercontent.com/taylor/kiex/master/kiex"
 KIEX_HOME="$HOME/.kiex"
 KIEX_BIN_PATH="$KIEX_HOME/bin/kiex"
 KIEX_SCRIPTS_PATH="$KIEX_HOME/scripts"
@@ -346,7 +346,7 @@ function self_update() {
   cp kiex kiex.bak-$D
 
   mkdir -p "$KIEX_HOME/bin"
-  curl -H "User-Agent: $USER_AGENT" -qs -o "$KIEX_HOME/bin/kiex" "$kiex_url"
+  curl -L -H "User-Agent: $USER_AGENT" -qs -o "$KIEX_HOME/bin/kiex" "$kiex_url"
   chmod +x "$KIEX_HOME/bin/kiex"
   #exec $KIEX_HOME/bin/kiex setup update
   exec $KIEX_HOME/bin/kiex selfupdatereloaded
