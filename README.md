@@ -18,7 +18,7 @@ Prereqs: bash, curl, git
 Run the following to get up and running:
 
 ```
-curl -qs https://raw.github.com/taylor/kiex/master/install | bash -s
+curl -qs https://raw.githubusercontent.com/taylor/kiex/master/install | bash -s
 ```
 
 which will install in $HOME/.kiex.
@@ -86,7 +86,7 @@ How is it like RVM?
  * Sane defaults
  * Uses Unix PATH to manage binary to use
 
-How is it not like RVM? 
+How is it not like RVM?
  * No function over-loading
  * Does not manage/install extra software and prereqs
 
@@ -164,7 +164,7 @@ A update to OTP crypto https://github.com/RoadRunnr/otp/commit/8837c1be2ba8a3c12
    - how to tie to elixir used? gemset like?
    - use dynamo tags?
  * Look at elixir-build for ideas, collaboration
- 
+
 ### License
 
 See [LICENSE file](LICENSE)

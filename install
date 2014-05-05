@@ -53,7 +53,7 @@ elif [ "$1" = "update" -a -f "$KIEX_HOME/bin/kiex" ] ; then
 fi
 
 mkdir -p "$KIEX_HOME/"{bin,builds,elixirs,scripts}
-curl -qs -o "$KIEX_HOME/bin/kiex" https://raw.github.com/taylor/kiex/master/kiex
+curl -qs -o "$KIEX_HOME/bin/kiex" https://raw.githubusercontent.com/taylor/kiex/master/kiex
 chmod +x "$KIEX_HOME/bin/kiex"
 #echo "$KIEX_HOME/bin/kiex" setup
 if [ $UPDATE = 1 ] ; then
@@ -73,9 +73,9 @@ fi
 # [[ -f $KIEX_HOME/elixirs/.default ]] && source $KIEX_HOME/elixirs/.default
 # EOF
 # }
-# 
+#
 # create_kiex_env_script
-# 
+#
 #echo "kiex has been installed in $KIEX_HOME"
 #echo "Add the following to your shell's config file (.bashrc/.zshrc):"
 #echo "    [[ -s \"\$HOME/.kiex/scripts/kiex\" ]] && source \"\$HOME/.kiex/scripts/kiex\""
