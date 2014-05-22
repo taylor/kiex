@@ -644,9 +644,12 @@ function list_elixirs() {
     default_elixir="elixir-$(source $elixirs_path/.default ; echo $ELIXIR_VERSION)"
   fi
 
-  if [ -n "$(which iex 2> /dev/null)" ] ; then
-    v=$(iex --version 2> /dev/null|grep -v 'Warning: could not run')
-    current_elixir="elixir-${v/Elixir /}"
+  iexpath=$(which iex 2> /dev/null)
+  if [ -n "${iexpath}" ] ; then
+    #v=$(iex --version 2> /dev/null|grep -v 'Warning: could not run')
+    x1=${iexpath/$elixirs_path\/}
+    current_elixir=${x1/\/bin\/iex}
+    #current_elixir="elixir-${v/Elixir /}"
   fi
 
   elixirs=($(
