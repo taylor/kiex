@@ -1,7 +1,7 @@
 kiex - Elixir version manager
 ====
 
-Kiex allows you to easily build and switch between different Elixir versions.
+Kiex allows you to easily build and switch between different [Elixir](http://elixir-lang.org/) versions.
 
 It supports setting the default (global) Elixir version as well as per shell/project versions.
 
