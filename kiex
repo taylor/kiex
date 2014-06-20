@@ -88,6 +88,7 @@ function usage() {
 #  printf "%b" "    setup             - install kiex into \$HOME/.kiex\n"
   printf "%b" "    selfupdate        - update kiex itself\n"
   printf "%b" "    implode           - removes kiex and all installed elixirs\n"
+  printf "%b" "    reset             - resets default elixir version to null\n"
 }
 
 
@@ -106,7 +107,7 @@ function readlink_f() {
       TARGET_FILE=`basename "$TARGET_FILE"`
   done
 
-  # Compute the canonicalized name by finding the physical path 
+  # Compute the canonicalized name by finding the physical path
   # for the directory we're in and appending the target file.
   PHYS_DIR=`pwd -P`
   RESULT="${PHYS_DIR}/${TARGET_FILE}"
@@ -161,7 +162,7 @@ function check_erlang_release() {
         fi
       else
         true
-      fi 
+      fi
     else
       # unknown character after release...
       false
@@ -402,12 +403,12 @@ function list_branches() {
 # function get_cached_elixir_releases() {
 #   tail -n +2 $cached_release_list
 # }
-# 
+#
 # function get_cached_releases_etag() {
 #   xetag=$(grep "^#Etag:" $cached_release_list)
 #   echo ${xetag//#Etag:}
 # }
-# 
+#
 # function update_release_cache() {
 #   x="$*"
 #   xetag=$(echo $x|grep ETag)
@@ -422,7 +423,7 @@ function get_known_elixir_releases() {
   # TODO: finish adding caching support with etags
   # xetag=$(curl -i -H "User-Agent: $USER_AGENT" -qs https://api.github.com/repos/elixir-lang/elixir/releases |grep "^ETag")
   # etag=${xetag//Etag: "/}
-# 
+#
 #   x=$(curl -i -H "User-Agent: $USER_AGENT" -H "Accept: application/json" -qs https://api.github.com/repos/elixir-lang/elixir/releases |grep '"tag_name":|ETag')
 #   xetag=$(echo $x|grep ETag)
 #   x=$(echo $x|grep -v ETag)
@@ -549,7 +550,7 @@ function find_elixir_ver() {
   target_elixir="$1"
   # default to not found (1)
   found=""
-  
+
   elixirs=($(
     cd "$elixirs_path"
     find . -maxdepth 1 -mindepth 1 -type d 2> /dev/null | sort
@@ -621,8 +622,8 @@ function set_default_elixir() {
     exit 1
   fi
 
-  if [ -e ${elixirs_path}/.default ] ; then 
-    if [ -L ${elixirs_path}/.default ] ; then 
+  if [ -e ${elixirs_path}/.default ] ; then
+    if [ -L ${elixirs_path}/.default ] ; then
       rm ${elixirs_path}/.default
       rm ${elixirs_path}/.default.csh
     else
@@ -634,6 +635,19 @@ function set_default_elixir() {
   ln -s "${elixirs_path}/.${version}.env.csh" "${elixirs_path}/.default.csh"
   echo "Default Elixir version set to $version"
   #echo "Load right now with: kiex use $version"
+}
+
+function reset_elixir() {
+  if [ -e ${elixirs_path}/.default ] ; then
+    if [ -L ${elixirs_path}/.default ] ; then
+      rm ${elixirs_path}/.default
+      rm ${elixirs_path}/.default.csh
+    else
+      echo "The file ${elixirs_path}/.default should not exists! Fix and try again."
+      exit 1
+    fi
+  fi
+  echo "Reset default Elixir version."
 }
 
 function list_elixirs() {
@@ -772,6 +786,9 @@ case $action in
   default)
     [[ -z "$1" ]] && usage && exit 1
     set_default_elixir "$1"
+    ;;
+  reset)
+    reset_elixir
     ;;
   shell)
     [[ -z "$1" ]] && usage && exit 1
