@@ -11,7 +11,7 @@ KIEX_SCRIPTS_PATH="$KIEX_HOME/scripts"
 cached_release_list="$KIEX_HOME/.cached_release_list"
 cached_branch_list="$KIEX_HOME/.cached_branch_list"
 
-USER_AGENT="taylor-kiex-elixir-installer"
+USER_AGENT="kiex-elixir-installer"
 
 if [ "$1" = "install" ] ; then
   ver="$2"
@@ -78,17 +78,17 @@ function usage() {
   me=$(basename $0)
   #echo "$me <list [known]|install <version>|use <version>>"
   echo "$me commands:"
-  printf "%b" "    list              - shows currently installed elixirs\n"
-  printf "%b" "    list known        - shows available elixirs releases\n"
-  printf "%b" "    list branches     - shows available elixirs branches\n"
-  printf "%b" "    install <version> - installs the given release version\n"
-  printf "%b" "    use <version>     - use the given version for this shell\n"
-  printf "%b" "    shell <version>   - use the given version for this shell\n"
-  printf "%b" "    default <version> - sets default version to be used\n"
+  printf "%b" "    list                      - shows currently installed elixirs\n"
+  printf "%b" "    list known                - shows available elixirs releases\n"
+  printf "%b" "    list branches             - shows available elixirs branches\n"
+  printf "%b" "    install <version>         - installs the given release version\n"
+  printf "%b" "    use <version> [--default] - use the given version for this shell\n"
+  printf "%b" "    shell <version>           - use the given version for this shell\n"
+  printf "%b" "    default <version>         - sets default version to be used\n"
 #  printf "%b" "    setup             - install kiex into \$HOME/.kiex\n"
-  printf "%b" "    selfupdate        - update kiex itself\n"
-  printf "%b" "    implode           - removes kiex and all installed elixirs\n"
-  printf "%b" "    reset             - resets default elixir version to null\n"
+  printf "%b" "    selfupdate                - update kiex itself\n"
+  printf "%b" "    implode                   - removes kiex and all installed elixirs\n"
+  printf "%b" "    reset                     - resets default elixir version to null\n"
 }
 
 
@@ -781,6 +781,9 @@ case $action in
     ;;
   use)
     [[ -z "$1" ]] && usage && exit 1
+    if [ "$2" = "--default" -o "$2" = "-default" ] ; then
+      set_default_elixir "$1"
+    fi
     use_elixir "$1"
     ;;
   default)
