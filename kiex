@@ -1,13 +1,16 @@
 #!/usr/bin/env bash
 
+KIEX_HOME="$HOME/.kiex"
+KIEX_BIN_PATH="$KIEX_HOME/bin/kiex"
+KIEX_SCRIPTS_PATH="$KIEX_HOME/scripts"
+
 base_path="$HOME/.kiex"
 build_path="${base_path}/builds"
 elixirs_path="${base_path}/elixirs"
 elixirs_source_path="\$HOME/.kiex/elixirs"
+mix_archives_path="${base_path}/mix/archives"
+mix_archives_source_path="\$HOME/.kiex/mix/archives"
 kiex_url="https://raw.githubusercontent.com/taylor/kiex/master/kiex"
-KIEX_HOME="$HOME/.kiex"
-KIEX_BIN_PATH="$KIEX_HOME/bin/kiex"
-KIEX_SCRIPTS_PATH="$KIEX_HOME/scripts"
 cached_release_list="$KIEX_HOME/.cached_release_list"
 cached_branch_list="$KIEX_HOME/.cached_branch_list"
 
@@ -292,6 +295,7 @@ function setup() {
   fi
 
   mkdir -p "$KIEX_HOME/"{bin,builds,elixirs,scripts}
+  mkdir -p "${KIEX_HOME}/mix/archives"
   #curl -qs -o "$KIEX_HOME/bin/kiex" "$kiex_url"
   #chmod +x "$KIEX_HOME/bin/kiex"
 
@@ -310,6 +314,7 @@ function setup() {
     then
       continue
     fi
+    mkdir -p "${mix_archives_path}/${version}"
     create_env_file "${version/elixir-/}"
   done
 
@@ -485,10 +490,10 @@ function install_elixir() {
   # TODO: deal with conflicts between branches and tags
   git branch -la |grep -q "origin/${version}"
   if [ "$?" = 0 ] ; then
-    git checkout -f "${version}"
+    git checkout -b "${version}" -f "${version}"
     git pull origin "${version}"
   else
-    git checkout -f "v${version}"
+    git checkout -b "${version}" -f "v${version}"
     git pull origin "v${version}"
   fi
   if [ "$SYSTEM" = "FreeBSD" ] ; then
@@ -498,6 +503,7 @@ function install_elixir() {
   fi
   $MAKE clean compile
   mkdir -p "$install_path"
+  # elixir make install does not work under *csh
   $MAKE "PREFIX=$install_path" install
 
   if [ ! "$?" = 0 ] ; then
@@ -506,6 +512,9 @@ function install_elixir() {
     exit 1
   fi
 
+  # For MIX_ARCHIVES - http://elixir-lang.org/docs/master/mix/Mix.Tasks.Archive.html
+  mkdir -p "${mix_archives_path}/elixir-${version}"
+
   echo "Installed Elixir version $version"
   create_env_file "$version"
 
@@ -513,8 +522,15 @@ function install_elixir() {
   echo "           kiex use ${version} "
   echo "or load the elixir environment file with: "
   printf "%b" "   "
-  # TODO: handle csh... look at split files or something...
-  printf "%b" "source ${elixirs_source_path}/elixir-${version}.env\n"
+
+  case $(basename $SHELL) in
+    csh|tcsh)
+      printf "%b" "source ${elixirs_source_path}/elixir-${version}.csh\n"
+      ;;
+    *)
+      printf "%b" "source ${elixirs_source_path}/elixir-${version}.env\n"
+      ;;
+  esac
 }
 
 function create_env_file() {
@@ -522,6 +538,7 @@ function create_env_file() {
   new_file="${elixirs_path}/elixir-${new_ver}.env"
   new_path="${elixirs_path}/elixir-${new_ver}/bin"
   new_mix_path="${elixirs_path}/elixir-${new_ver}/ebin"
+
   if [ -f "$new_file" ] ; then
     mv -f "$new_file" "${new_file}.old"
   fi
@@ -529,6 +546,7 @@ function create_env_file() {
 cat <<EOF> $new_file
 export ELIXIR_VERSION="$new_ver"
 export PATH="${elixirs_source_path}/elixir-${new_ver}/bin:\$PATH"
+export MIX_ARCHIVES="${mix_archives_source_path}/elixir-${new_ver}"
 EOF
 
 # TODO: add MIX_PATH maybe?
@@ -543,6 +561,7 @@ EOF
 cat <<EOF> $new_file
 setenv ELIXIR_VERSION "$new_ver"
 setenv PATH "${elixirs_source_path}/elixir-${new_ver}/bin:\$PATH"
+setenv MIX_ARCHIVES="${mix_archives_source_path}/elixir-${new_ver}"
 EOF
 }
 
