@@ -493,7 +493,7 @@ function install_elixir() {
     git checkout -b "${version}" -f "${version}"
     git pull origin "${version}"
   else
-    git checkout -b "${version}" -f "v${version}"
+    git checkout -b "v${version}" -f "v${version}"
     git pull origin "v${version}"
   fi
   if [ "$SYSTEM" = "FreeBSD" ] ; then
