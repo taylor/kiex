@@ -335,6 +335,27 @@ function setup() {
     update=1
   fi
 
+  if [ "$update" = 1 ] ; then
+    echo "Updating the kiex installation in $KIEX_HOME"
+
+    grep -iq kiex ~/.bashrc
+    [[ $? = 0 ]] && in_bashrc=$HOME/.bashrc
+    grep -iq kiex ~/.profile
+    [[ $? = 0 ]] && in_profile=$HOME/.profile
+    grep -iq kiex ~/.bash_profile
+    [[ $? = 0 ]] && in_bash_profile=$HOME/.bash_profile
+    grep -iq kiex ~/.zshrc
+    [[ $? = 0 ]] && in_zshrc=$HOME/.zshrc
+    grep -iq kiex ~/.zsh_profile
+    [[ $? = 0 ]] && in_zsh_profile=$HOME/.zsh_profile
+
+    if [ -z "$in_bashrc" -a -z "$in_profile" -a -z "$in_bash_profile" -a -z "$in_zshrc" -a -z "$in_zsh_profile" ] ; then
+      quiet=0
+    else
+      echo "Kiex sourcing line found in $in_bashrc $in_profile $in_bash_profile $in_zshrc $in_zsh_profile"
+    fi
+  fi
+
   mkdir -p "$KIEX_HOME/"{bin,builds,elixirs,scripts}
   mkdir -p "${KIEX_HOME}/mix/archives"
 
