@@ -64,14 +64,11 @@ if [ "$1" = "install_kiex" ] ; then
     UPDATE=1
   fi
 
-  mkdir -p "$KIEX_HOME/"{bin,builds,elixirs,mix,scripts}
-  mkdir "${KIEX_HOME}/mix/archives"
-  curl -sSL -o "$KIEX_HOME/bin/kiex" https://raw.githubusercontent.com/taylor/kiex/master/kiex
+  mkdir -p "${KIEX_HOME}/bin"
+  \curl -sSL -o "$KIEX_HOME/bin/kiex" https://raw.githubusercontent.com/taylor/kiex/master/kiex
   chmod +x "$KIEX_HOME/bin/kiex"
-  #echo "$KIEX_HOME/bin/kiex" setup
   if [ $UPDATE = 1 ] ; then
     exec "$KIEX_HOME/bin/kiex" selfupdate
-    #exec "$KIEX_HOME/bin/kiex" setup update
   elif [ $UPGRADE = 1 ] ; then
     exec "$KIEX_HOME/bin/kiex" setup upgrade
   else
@@ -386,7 +383,7 @@ function self_update() {
   cp kiex kiex.bak-$D
 
   mkdir -p "$KIEX_HOME/bin"
-  curl -L -H "User-Agent: $USER_AGENT" -qs -o "$KIEX_HOME/bin/kiex" "$kiex_url"
+  \curl -L -H "User-Agent: $USER_AGENT" -qs -o "$KIEX_HOME/bin/kiex" "$kiex_url"
   chmod +x "$KIEX_HOME/bin/kiex"
   #exec $KIEX_HOME/bin/kiex setup update
   exec $KIEX_HOME/bin/kiex selfupdatereloaded
@@ -421,7 +418,7 @@ function kiex_implode() {
 function get_elixir_branches() {
   # TODO: add cache support
   # x=$(curl -i -H "User-Agent: $USER_AGENT" -H "Accept: application/json" -qs https://api.github.com/repos/elixir-lang/elixir/branches |grep '"name":|ETag:')
-  x=$(curl -i -H "User-Agent: $USER_AGENT" -H "Accept: application/json" -qs https://api.github.com/repos/elixir-lang/elixir/branches |grep '"name":')
+  x=$(\curl -i -H "User-Agent: $USER_AGENT" -H "Accept: application/json" -qs https://api.github.com/repos/elixir-lang/elixir/branches |grep '"name":')
   x=$(echo $x | tr ',' '\n' |grep name\":|sed 's/.*name":"\([^"]*\)"/\1/')
   #x=${x//\"name\":/}
   #x=${x//[\",]/}
@@ -467,7 +464,7 @@ function get_known_elixir_releases() {
 #   xetag=$(echo $x|grep ETag)
 #   x=$(echo $x|grep -v ETag)
 
-  x=$(curl -i -H "User-Agent: $USER_AGENT" -H 'Accept: application/json' -qs https://api.github.com/repos/elixir-lang/elixir/releases | tr ',' '\n' | grep '"tag_name":')
+  x=$(\curl -i -H "User-Agent: $USER_AGENT" -H 'Accept: application/json' -qs https://api.github.com/repos/elixir-lang/elixir/releases | tr ',' '\n' | grep '"tag_name":')
   x=${x//\"tag_name\":/}
   x=${x//[\",]/}
   x=${x//v/}

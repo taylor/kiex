@@ -18,7 +18,7 @@ Prereqs: bash, curl, git
 Run the following to get up and running:
 
 ```
-curl -Lqs https://raw.githubusercontent.com/taylor/kiex/master/install | bash -s
+\curl -sSL https://raw.githubusercontent.com/taylor/kiex/master/install | bash -s
 ```
 
 which will install in $HOME/.kiex.
