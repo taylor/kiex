@@ -337,15 +337,15 @@ function setup() {
     update=1
   fi
 
-  grep -v '^#' ~/.bashrc | grep -isq kiex
+  grep -sqv '^#' ~/.bashrc | grep -isq kiex
   [[ $? = 0 ]] && in_bashrc=$HOME/.bashrc
-  grep -v '^#' ~/.profile | grep -isq kiex
+  grep -sqv '^#' ~/.profile | grep -isq kiex
   [[ $? = 0 ]] && in_profile=$HOME/.profile
-  grep -v '^#' ~/.bash_profile | grep -isq kiex 
+  grep -sqv '^#' ~/.bash_profile | grep -isq kiex 
   [[ $? = 0 ]] && in_bash_profile=$HOME/.bash_profile
-  grep -v '^#' ~/.zshrc | grep -isq kiex 
+  grep -sqv '^#' ~/.zshrc | grep -isq kiex 
   [[ $? = 0 ]] && in_zshrc=$HOME/.zshrc
-  grep -v '^#' ~/.zsh_profile | grep -isq kiex 
+  grep -sqv '^#' ~/.zsh_profile | grep -isq kiex 
   [[ $? = 0 ]] && in_zsh_profile=$HOME/.zsh_profile
 
   str=""
@@ -354,6 +354,7 @@ function setup() {
   done
   if [ -z "$str"  ] ; then
     echo "    Kiex sourcing line not found in ~/.bashrc, ~/.bash_profile, ~/.profile, ~/.zshrc, or ~/.zsh_profile"
+    source_line_found=0
   else
     echo "    Kiex sourcing line found in: ${str}"
     source_line_found=1
