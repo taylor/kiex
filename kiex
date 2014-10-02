@@ -16,30 +16,6 @@ cached_branch_list="$KIEX_HOME/.cached_branch_list"
 
 USER_AGENT="kiex-elixir-installer"
 
-if [ "$1" = "install" ] ; then
-  ver="$2"
-  ver=${ver//v/}
-  major=${ver%%.[0-9]*}
-  mp=${ver#[0-9]*.}
-  minor=${mp%.*[0-9]}
-  patch=${ver##*[0-9].}
-  if (( $major >= 1 )) || (( $minor > 12 )) ; then
-    need_erl_17=1
-  fi
-fi
-
-if [ "$need_erl_17" = 1 ] ; then
-  erlang_min_release_full="R17"
-  erlang_min_release=17
-  erlang_min_release_canidate=""
-  erlang_min_release_canidate_n=""
-else
-  erlang_min_release_full="R16B"
-  erlang_min_release=16
-  erlang_min_release_canidate="B"
-  erlang_min_release_canidate_n=""
-fi
-
 SYSTEM=$(uname -s)
 
 # Running bash -l from csh does not change $SHELL
@@ -78,6 +54,59 @@ else
   echo "Unsupported system $SYSTEM"
   exit 1
 fi
+
+if [ "$1" = "install_kiex" ] ; then
+  UPGRADE=0
+  UPDATE=0
+  if [ "$1" = "upgrade" -a -f "$KIEX_HOME/bin/kiex" ] ; then
+    UPGRADE=1
+  elif [ "$1" = "update" -a -f "$KIEX_HOME/bin/kiex" ] ; then
+    UPDATE=1
+  fi
+
+  mkdir -p "$KIEX_HOME/"{bin,builds,elixirs,mix,scripts}
+  mkdir "${KIEX_HOME}/mix/archives"
+  curl -sSL -o "$KIEX_HOME/bin/kiex" https://raw.githubusercontent.com/taylor/kiex/master/kiex
+  chmod +x "$KIEX_HOME/bin/kiex"
+  #echo "$KIEX_HOME/bin/kiex" setup
+  if [ $UPDATE = 1 ] ; then
+    exec "$KIEX_HOME/bin/kiex" selfupdate
+    #exec "$KIEX_HOME/bin/kiex" setup update
+  elif [ $UPGRADE = 1 ] ; then
+    exec "$KIEX_HOME/bin/kiex" setup upgrade
+  else
+    echo "Running initial environment setup"
+    exec "$KIEX_HOME/bin/kiex" setup
+  fi
+
+  exit 0
+fi
+
+if [ "$1" = "install" ] ; then
+  ver="$2"
+  ver=${ver//v/}
+  major=${ver%%.[0-9]*}
+  mp=${ver#[0-9]*.}
+  minor=${mp%.*[0-9]}
+  patch=${ver##*[0-9].}
+  if (( $major >= 1 )) || (( $minor > 12 )) ; then
+    need_erl_17=1
+  fi
+fi
+
+if [ "$need_erl_17" = 1 ] ; then
+  erlang_min_release_full="R17"
+  erlang_min_release=17
+  erlang_min_release_canidate=""
+  erlang_min_release_canidate_n=""
+else
+  erlang_min_release_full="R16B"
+  erlang_min_release=16
+  erlang_min_release_canidate="B"
+  erlang_min_release_canidate_n=""
+fi
+
+
 
 ######################################
 ######################################
