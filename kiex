@@ -63,19 +63,6 @@ elif [ "$1" = "install" -a "$2" = "kiex" ] ; then
 fi
 
 if [ "$INSTALL_KIEX" = 1 ] ; then
-  # UPGRADE=0
-  # UPDATE=0
-  # if [ "$1" = "upgrade" -a -f "$KIEX_HOME/bin/kiex" ] ; then
-  #   UPGRADE=1
-  # elif [ "$1" = "update" -a -f "$KIEX_HOME/bin/kiex" ] ; then
-  #   UPDATE=1
-  # fi
-
-  # if [ $UPDATE = 1 ] ; then
-  #   exec "$KIEX_HOME/bin/kiex" selfupdate
-  # elif [ $UPGRADE = 1 ] ; then
-  #   exec "$KIEX_HOME/bin/kiex" setup upgrade
-
   if [ -x $KIEX_HOME/bin/kiex ] ; then
     exec "$KIEX_HOME/bin/kiex" selfupdate
   else
@@ -89,31 +76,6 @@ if [ "$INSTALL_KIEX" = 1 ] ; then
 
   exit 0
 fi
-
-if [ "$1" = "install" ] ; then
-  ver="$2"
-  ver=${ver//v/}
-  major=${ver%%.[0-9]*}
-  mp=${ver#[0-9]*.}
-  minor=${mp%.*[0-9]}
-  patch=${ver##*[0-9].}
-  if (( $major >= 1 )) || (( $minor > 12 )) ; then
-    need_erl_17=1
-  fi
-fi
-
-if [ "$need_erl_17" = 1 ] ; then
-  erlang_min_release_full="R17"
-  erlang_min_release=17
-  erlang_min_release_canidate=""
-  erlang_min_release_canidate_n=""
-else
-  erlang_min_release_full="R16B"
-  erlang_min_release=16
-  erlang_min_release_canidate="B"
-  erlang_min_release_canidate_n=""
-fi
-
 
 
 ######################################
@@ -185,6 +147,8 @@ function check_erlang_release() {
   if [ -z "$r" ] ; then
     echo "Failed to extract the erlang release!" 1>&2
     false
+  elif [[ -n "$erlang_max_release" ]] && (( $r > $erlang_max_release )) ; then
+    false
   elif (( $r > $erlang_min_release )) ; then
     true
   elif (( $r < $erlang_min_release )) ; then
@@ -235,7 +199,12 @@ function exit_on_unmet_prereqs() {
 }
 
 function erlang_req_info() {
-  echo "That Elixir requires Erlang ${erlang_min_release_full} or later"
+  if [ -n "$erlang_max_release" ] ; then
+    echo "That Elixir requires Erlang ${erlang_min_release_full} or later but before ${erlang_before_release_full}"
+  else
+    echo "That Elixir requires Erlang ${erlang_min_release_full} or later"
+  fi
+
   echo "Erlang installation choices:"
   echo "   * Download - https://www.erlang-solutions.com/downloads/download-erlang-otp"
   echo "                http://www.erlang.org/download.html"
@@ -540,6 +509,30 @@ function exit_on_invalid_version() {
 }
 
 function install_elixir() {
+  ver="$1"
+  ver=${ver//v/}
+  major=${ver%%.[0-9]*}
+  mp=${ver#[0-9]*.}
+  minor=${mp%.*[0-9]}
+  patch=${ver##*[0-9].}
+  if (( $major >= 1 )) || (( $minor > 12 )) ; then
+    need_erl_17=1
+  fi
+
+  if [ "$need_erl_17" = 1 ] ; then
+    erlang_min_release_full="R17"
+    erlang_min_release=17
+    erlang_min_release_canidate=""
+    erlang_min_release_canidate_n=""
+  else
+    erlang_min_release_full="R16B"
+    erlang_min_release=16
+    erlang_before_release_full=R17
+    erlang_max_release=16
+    erlang_min_release_canidate="B"
+    erlang_min_release_canidate_n=""
+  fi
+
   version="$1"
 
   exit_on_invalid_version "$1"
