@@ -337,15 +337,15 @@ function setup() {
     update=1
   fi
 
-  grep -sqv '^#' ~/.bashrc | grep -isq kiex
+  grep -sv '^#' ~/.bashrc | grep -isq kiex
   [[ $? = 0 ]] && in_bashrc=$HOME/.bashrc
-  grep -sqv '^#' ~/.profile | grep -isq kiex
+  grep -sv '^#' ~/.profile | grep -isq kiex
   [[ $? = 0 ]] && in_profile=$HOME/.profile
-  grep -sqv '^#' ~/.bash_profile | grep -isq kiex 
+  grep -sv '^#' ~/.bash_profile | grep -isq kiex 
   [[ $? = 0 ]] && in_bash_profile=$HOME/.bash_profile
-  grep -sqv '^#' ~/.zshrc | grep -isq kiex 
+  grep -sv '^#' ~/.zshrc | grep -isq kiex 
   [[ $? = 0 ]] && in_zshrc=$HOME/.zshrc
-  grep -sqv '^#' ~/.zsh_profile | grep -isq kiex 
+  grep -sv '^#' ~/.zsh_profile | grep -isq kiex 
   [[ $? = 0 ]] && in_zsh_profile=$HOME/.zsh_profile
 
   str=""
