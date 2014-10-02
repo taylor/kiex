@@ -75,13 +75,14 @@ if [ "$INSTALL_KIEX" = 1 ] ; then
   #   exec "$KIEX_HOME/bin/kiex" selfupdate
   # elif [ $UPGRADE = 1 ] ; then
   #   exec "$KIEX_HOME/bin/kiex" setup upgrade
+
+  mkdir -p "${KIEX_HOME}/bin"
+  \curl -sSL -o "$KIEX_HOME/bin/kiex" https://raw.githubusercontent.com/taylor/kiex/master/kiex
+  chmod +x "$KIEX_HOME/bin/kiex"
+
   if [ -x $KIEX_HOME/bin/kiex ] ; then
     exec "$KIEX_HOME/bin/kiex" selfupdate
   else
-    mkdir -p "${KIEX_HOME}/bin"
-    \curl -sSL -o "$KIEX_HOME/bin/kiex" https://raw.githubusercontent.com/taylor/kiex/master/kiex
-    chmod +x "$KIEX_HOME/bin/kiex"
-
     echo "Running initial environment setup"
     exec "$KIEX_HOME/bin/kiex" setup
   fi
