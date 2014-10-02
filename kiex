@@ -55,6 +55,8 @@ if [ "$SYSTEM" = "Linux" ] ; then
       Fedora) DISTRO="Fedora" ;;
       *) DISTRO="$lsb_id" ;;
     esac
+  elif [ "$(grep -ic arch /etc/os-release)" = 1 ] ; then
+    DISTRO="Arch"
   elif [ "$(grep -ic Ubuntu /etc/issue)" = 1 ] ; then
     DISTRO="Ubuntu"
   elif [ "$(grep -ic Centos /etc/issue)" = 1 ] ; then
