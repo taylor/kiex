@@ -55,23 +55,33 @@ else
   exit 1
 fi
 
+INSTALL_KIEX=0
 if [ "$1" = "install_kiex" ] ; then
-  UPGRADE=0
-  UPDATE=0
-  if [ "$1" = "upgrade" -a -f "$KIEX_HOME/bin/kiex" ] ; then
-    UPGRADE=1
-  elif [ "$1" = "update" -a -f "$KIEX_HOME/bin/kiex" ] ; then
-    UPDATE=1
-  fi
+  INSTALL_KIEX=1
+elif [ "$1" = "install" -a "$2" = "kiex" ] ; then
+  INSTALL_KIEX=1
+fi
 
-  mkdir -p "${KIEX_HOME}/bin"
-  \curl -sSL -o "$KIEX_HOME/bin/kiex" https://raw.githubusercontent.com/taylor/kiex/master/kiex
-  chmod +x "$KIEX_HOME/bin/kiex"
-  if [ $UPDATE = 1 ] ; then
+if [ "$INSTALL_KIEX" = 1 ] ; then
+  # UPGRADE=0
+  # UPDATE=0
+  # if [ "$1" = "upgrade" -a -f "$KIEX_HOME/bin/kiex" ] ; then
+  #   UPGRADE=1
+  # elif [ "$1" = "update" -a -f "$KIEX_HOME/bin/kiex" ] ; then
+  #   UPDATE=1
+  # fi
+
+  # if [ $UPDATE = 1 ] ; then
+  #   exec "$KIEX_HOME/bin/kiex" selfupdate
+  # elif [ $UPGRADE = 1 ] ; then
+  #   exec "$KIEX_HOME/bin/kiex" setup upgrade
+  if [ -x $KIEX_HOME/bin/kiex ] ; then
     exec "$KIEX_HOME/bin/kiex" selfupdate
-  elif [ $UPGRADE = 1 ] ; then
-    exec "$KIEX_HOME/bin/kiex" setup upgrade
   else
+    mkdir -p "${KIEX_HOME}/bin"
+    \curl -sSL -o "$KIEX_HOME/bin/kiex" https://raw.githubusercontent.com/taylor/kiex/master/kiex
+    chmod +x "$KIEX_HOME/bin/kiex"
+
     echo "Running initial environment setup"
     exec "$KIEX_HOME/bin/kiex" setup
   fi
@@ -327,8 +337,6 @@ function setup() {
 
   mkdir -p "$KIEX_HOME/"{bin,builds,elixirs,scripts}
   mkdir -p "${KIEX_HOME}/mix/archives"
-  #curl -qs -o "$KIEX_HOME/bin/kiex" "$kiex_url"
-  #chmod +x "$KIEX_HOME/bin/kiex"
 
   create_kiex_env_script
 
