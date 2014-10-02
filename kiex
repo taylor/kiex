@@ -19,9 +19,11 @@ USER_AGENT="kiex-elixir-installer"
 if [ "$1" = "install" ] ; then
   ver="$2"
   ver=${ver//v/}
-  max=${ver%%.[0-9]*}
-  middle=`echo $ver | awk -F '.' '{print $2}'`
-  if (( $max >= 1 )) || (( $middle > 12 )) ; then
+  major=${ver%%.[0-9]*}
+  mp=${ver#[0-9]*.}
+  minor=${mp%.*[0-9]}
+  patch=${ver##*[0-9].}
+  if (( $major >= 1 )) || (( $minor > 12 )) ; then
     need_erl_17=1
   fi
 fi
