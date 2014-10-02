@@ -350,10 +350,15 @@ function setup() {
     grep -isq kiex ~/.zsh_profile
     [[ $? = 0 ]] && in_zsh_profile=$HOME/.zsh_profile
 
-    if [ -z "$in_bashrc" -a -z "$in_profile" -a -z "$in_bash_profile" -a -z "$in_zshrc" -a -z "$in_zsh_profile" ] ; then
-      quiet=0
+    str=""
+    for s in $in_bashrc $in_profile $in_bash_profile $in_zshrc $in_zsh_profile ; do
+      [[ -z "$str" ]] && str="$s" || str="${str}, $s"
+    done
+    if [ -z "$str"  ] ; then
+      echo "    Kiex sourcing line not found in ~/.bashrc, ~/.bash_profile, ~/.profile, ~/.zshrc, or ~/.zsh_profile"
     else
-      echo "Kiex sourcing line found in $in_bashrc $in_profile $in_bash_profile $in_zshrc $in_zsh_profile"
+      echo "    Kiex sourcing line found in: ${str}"
+      source_line_found=1
     fi
   fi
 
@@ -386,6 +391,9 @@ function setup() {
   fi
 
   if [ "$update" = 1 ] ; then
+    source_line_found=1
+    echo "    Add the following to your shell's config file (.bashrc/.zshrc/.cshrc):"
+    echo "        test -s \"\$HOME/.kiex/scripts/kiex\" && source \"\$HOME/.kiex/scripts/kiex\""
     echo "kiex installed in $KIEX_HOME is now updated ☺ "
   fi
 }
