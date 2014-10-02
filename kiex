@@ -333,33 +333,30 @@ function setup() {
     shift
   fi
   if [ "$1" = "update" ] ; then
+    echo "Updating the kiex installation in $KIEX_HOME"
     update=1
   fi
 
-  if [ "$update" = 1 ] ; then
-    echo "Updating the kiex installation in $KIEX_HOME"
+  grep -v '^#' ~/.bashrc | grep -isq kiex
+  [[ $? = 0 ]] && in_bashrc=$HOME/.bashrc
+  grep -v '^#' ~/.profile | grep -isq kiex
+  [[ $? = 0 ]] && in_profile=$HOME/.profile
+  grep -v '^#' ~/.bash_profile | grep -isq kiex 
+  [[ $? = 0 ]] && in_bash_profile=$HOME/.bash_profile
+  grep -v '^#' ~/.zshrc | grep -isq kiex 
+  [[ $? = 0 ]] && in_zshrc=$HOME/.zshrc
+  grep -v '^#' ~/.zsh_profile | grep -isq kiex 
+  [[ $? = 0 ]] && in_zsh_profile=$HOME/.zsh_profile
 
-    grep -isq kiex ~/.bashrc
-    [[ $? = 0 ]] && in_bashrc=$HOME/.bashrc
-    grep -isq kiex ~/.profile
-    [[ $? = 0 ]] && in_profile=$HOME/.profile
-    grep -isq kiex ~/.bash_profile
-    [[ $? = 0 ]] && in_bash_profile=$HOME/.bash_profile
-    grep -isq kiex ~/.zshrc
-    [[ $? = 0 ]] && in_zshrc=$HOME/.zshrc
-    grep -isq kiex ~/.zsh_profile
-    [[ $? = 0 ]] && in_zsh_profile=$HOME/.zsh_profile
-
-    str=""
-    for s in $in_bashrc $in_profile $in_bash_profile $in_zshrc $in_zsh_profile ; do
-      [[ -z "$str" ]] && str="$s" || str="${str}, $s"
-    done
-    if [ -z "$str"  ] ; then
-      echo "    Kiex sourcing line not found in ~/.bashrc, ~/.bash_profile, ~/.profile, ~/.zshrc, or ~/.zsh_profile"
-    else
-      echo "    Kiex sourcing line found in: ${str}"
-      source_line_found=1
-    fi
+  str=""
+  for s in $in_bashrc $in_profile $in_bash_profile $in_zshrc $in_zsh_profile ; do
+    [[ -z "$str" ]] && str="$s" || str="${str}, $s"
+  done
+  if [ -z "$str"  ] ; then
+    echo "    Kiex sourcing line not found in ~/.bashrc, ~/.bash_profile, ~/.profile, ~/.zshrc, or ~/.zsh_profile"
+  else
+    echo "    Kiex sourcing line found in: ${str}"
+    source_line_found=1
   fi
 
   mkdir -p "$KIEX_HOME/"{bin,builds,elixirs,scripts}
@@ -384,17 +381,15 @@ function setup() {
     create_env_file "${version/elixir-/}"
   done
 
-  if [ ! "$quiet" = 1 ] ; then
-    echo "kiex has been installed in $KIEX_HOME"
-    echo "Add the following to your shell's config file (.bashrc/.zshrc/.cshrc):"
-    echo "    test -s \"\$HOME/.kiex/scripts/kiex\" && source \"\$HOME/.kiex/scripts/kiex\""
+  if [ $source_line_found = 0 ] ; then
+    echo "    Add the following to your shell's config file (.bashrc/.zshrc/.cshrc):"
+    echo "        test -s \"\$HOME/.kiex/scripts/kiex\" && source \"\$HOME/.kiex/scripts/kiex\""
   fi
 
   if [ "$update" = 1 ] ; then
-    source_line_found=1
-    echo "    Add the following to your shell's config file (.bashrc/.zshrc/.cshrc):"
-    echo "        test -s \"\$HOME/.kiex/scripts/kiex\" && source \"\$HOME/.kiex/scripts/kiex\""
     echo "kiex installed in $KIEX_HOME is now updated ☺ "
+  else
+    echo "kiex has been installed in $KIEX_HOME ☺ "
   fi
 }
 
