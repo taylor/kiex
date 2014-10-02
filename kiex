@@ -58,14 +58,14 @@ if [ "$SYSTEM" = "Linux" ] ; then
       Fedora) DISTRO="Fedora" ;;
       *) DISTRO="$lsb_id" ;;
     esac
-  elif [ "$(grep -ic arch /etc/os-release)" = 1 ] ; then
+  elif (( "$(grep -ic arch /etc/os-release)" > 0 )) ; then
     DISTRO="Arch"
-  elif [ "$(grep -ic Ubuntu /etc/issue)" = 1 ] ; then
+  elif (( "$(grep -ic Ubuntu /etc/issue)" > 0 )) ; then
     DISTRO="Ubuntu"
-  elif [ "$(grep -ic Centos /etc/issue)" = 1 ] ; then
-    DISTRO=Centos
-  elif [ "$([[ -f /etc/inittab ]] && grep -ic Gentoo /etc/inittab)" = 3 ] ; then
-    DISTRO=Gentoo
+  elif (( "$(grep -ic Centos /etc/issue)" > 0 )) ; then
+    DISTRO="Centos"
+  elif (( "$([[ -f /etc/inittab ]] && grep -ic Gentoo /etc/inittab)" > 0 )) ; then
+    DISTRO="Gentoo"
   else
     echo "Unknown Linux distribution"
   fi
