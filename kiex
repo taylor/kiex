@@ -492,12 +492,13 @@ function install_elixir() {
   # TODO: deal with conflicts between branches and tags
   git branch -la |grep -q "origin/${version}"
   if [ "$?" = 0 ] ; then
-    git checkout -b "${version}" -f "${version}"
+    git checkout -b "${version}" -f "origin/${version}" || git checkout "${version}"
     git pull origin "${version}"
   else
-    git checkout -b "${version}" -f "v${version}"
+    git checkout -b "v${version}" -f "v${version}" || git checkout "v${version}"
     git pull origin "v${version}"
   fi
+
   if [ "$SYSTEM" = "FreeBSD" ] ; then
     MAKE=gmake
   else
