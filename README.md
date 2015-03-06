@@ -23,7 +23,6 @@ Run the following to get up and running:
 
 which will install in $HOME/.kiex.
 
-
 ### Usage
 
 List installed versions
@@ -54,6 +53,14 @@ Upgrade kiex
  * ``` kiex selfupdate ``` -- pull down latest updates for kiex
     - Can also re-curl
 
+### Sourcing elixir into your path
+
+After installing your preferred version of elixir and setting it as your default you can use kiex scripts to
+put your default elixir bin into your path.  One way to do this is to add the following line into your rc file:
+
+```
+[[ -s "$HOME/.kiex/scripts/kiex" ]] && source "$HOME/.kiex/scripts/kiex"
+```
 
 ### Design philosophy
 
