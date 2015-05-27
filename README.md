@@ -125,6 +125,7 @@ Erlang installs:
 Alternatives:
  * [exenv](https://github.com/mururu/exenv) + [elixir-build](https://github.com/mururu/elixir-build)
  * [edwb](https://github.com/clutchanalytics/edwb)
+ * [asdf](https://github.com/HashNuke/asdf) extendable version manager for multiple languages (eg. ruby, erlang, elixir)
 
 Related tools:
  * [kerl](https://github.com/spawngrid/kerl) - Easy building and installing of Erlang/OTP instances
