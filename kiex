@@ -18,6 +18,14 @@ USER_AGENT="kiex-elixir-installer"
 
 SYSTEM=$(uname -s)
 
+function curl_with_args() {
+  if [ -n $KIEX_OAUTH_TOKEN ]; then
+    \curl -H "Authorization: token $KIEX_OAUTH_TOKEN" $@
+  else
+    \curl $@
+  fi
+}
+
 # Running bash -l from csh does not change $SHELL
 if [ -z "$USERSHELL" ] ; then
   USERSHELL=$(basename $SHELL)
@@ -808,14 +816,6 @@ function validate_install() {
     echo "Please run $me setup"
     exit 1
     #setup
-  fi
-}
-
-function curl_with_args() {
-  if [ -n $KIEX_OAUTH_TOKEN ]; then
-    \curl -H "Authorization: token $KIEX_OAUTH_TOKEN" $@
-  else
-    \curl $@
   fi
 }
 
