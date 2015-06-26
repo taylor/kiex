@@ -515,7 +515,7 @@ function install_elixir() {
   mp=${ver#[0-9]*.}
   minor=${mp%.*[0-9]}
   patch=${ver##*[0-9].}
-  if (( $major >= 1 )) || (( $minor > 12 )) ; then
+  if (( $major >= 1 )) || (( $minor > 12 )) || (( $ver == "master" )); then
     need_erl_17=1
   fi
 
