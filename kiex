@@ -123,7 +123,7 @@ function readlink_f() {
 
 function check_erlang_release() {
   if [ "$SYSTEM" = "Linux" ] ; then
-    erlang_release_file="$(dirname $(readlink -f $(which erl 2> /dev/null)))/../releases/RELEASES"
+    erlang_release_file="$(dirname $(readlink -f $(which erl 2> /dev/null)))/../../releases/RELEASES"
   elif [ "$SYSTEM" = "Darwin" -o "$SYSTEM" = "FreeBSD" ] ; then
     erlang_release_file="$(dirname $(readlink_f $(which erl 2> /dev/null)))/../releases/RELEASES"
   else
