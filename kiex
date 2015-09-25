@@ -123,7 +123,14 @@ function readlink_f() {
 
 function check_erlang_release() {
   if [ "$SYSTEM" = "Linux" ] ; then
-    erlang_release_file="$(dirname $(readlink -f $(which erl 2> /dev/null)))/../../releases/RELEASES"
+    ERL_EXEC_PATH="$(dirname $(readlink -f $(which erl 2> /dev/null)))"
+    #ERL_EXEC_PATH might show the path to the 'erl' executable in the 
+    #erlang/bin or /erlang/erts-*/bin folder.
+    if [ -e $ERL_EXEC_PATH/../releases/RELEASES ] ; then
+        erlang_release_file="$ERL_EXEC_PATH/../releases/RELEASES"
+    else
+        erlang_release_file="$ERL_EXEC_PATH/../../releases/RELEASES"
+    fi
   elif [ "$SYSTEM" = "Darwin" -o "$SYSTEM" = "FreeBSD" ] ; then
     erlang_release_file="$(dirname $(readlink_f $(which erl 2> /dev/null)))/../releases/RELEASES"
   else
