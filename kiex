@@ -279,7 +279,7 @@ function kiex() {
     #eval "$($HOME/.kiex/bin/kiex $*|grep source)"
     source_line="$(USERSHELL=notcsh $HOME/.kiex/bin/kiex $*|grep source)"
     if [ -z "$source_line" ] ; then
-      echo "Failed to use $*"
+      echo "Failed to $*"
     else
       eval "$source_line"
       shift
