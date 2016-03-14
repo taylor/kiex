@@ -693,9 +693,9 @@ function find_elixir_ver() {
 function use_elixir() {
   target_elixir="$1"
   version=$(find_elixir_ver "$target_elixir")
-  alias=$(check_if_alias "$target_elixir")
 
-  # check if alias too
+  [[ -z $version ]] && version=$(get_version_from_alias "$target_elixir");
+
   if [ -z "$version" ] ; then
     echo "Elixir version $target_elixir not found.  Try kiex install $target_elixir"
     exit 1
@@ -712,20 +712,18 @@ function use_elixir() {
   fi
 }
 
-function check_if_alias() {
-  local symlink_present=false
-  local symlink_path="$elixir_source_path/.elixir-$target_version"
+function get_version_from_alias() {
   local target_version="$1"
+  local version_installed=""
+  local symlink_path="${elixirs_path}/.elixir-$target_version"
 
-  if [ -L "$symlink_path" ]; then
+  if [[ -L $symlink_path ]]; then
     local origin_path=$(readlink "$symlink_path")
-    local origin_version=$(basename "$origin_path" | | grep -oh "[0-9]*\.[0-9]*\.[0-9]*")
+    local origin_version=$(basename "$origin_path" | grep -oh "[0-9]*\.[0-9]*\.[0-9]*")
     local version_installed=$(find_elixir_ver "$origin_version")
-
-    ! [ -z $version_installed ] && symlink_present=true
   fi
 
-  [ symlink_present = true ]
+  echo "$version_installed"
 }
 
 function elixir_subshell() {
