@@ -40,6 +40,9 @@ Install a known release or branch
 Use specific elixir version
  * ``` kiex use 0.12.5 ``` -- Sets the elixir version for current shell.
 
+Create an alias for the specified elixir version
+ * ``` kiex alias 0.12.5 0.12 ```
+
 Use sub-shell with specific elixir version
  * ``` kiex shell 0.12.5 ``` -- Starts sub-shell with given elixir version.  Exiting shell goes to default.
 
