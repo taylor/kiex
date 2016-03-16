@@ -714,9 +714,9 @@ function use_elixir() {
 }
 
 function get_version_from_alias() {
-  local target_version="$1"
+  local alias="$1"
   local version_installed=""
-  local symlink_path="${elixirs_path}/.elixir-$target_version"
+  local symlink_path="${elixirs_path}/.elixir-$alias"
 
   if [[ -L $symlink_path ]]; then
     local origin_path=$(readlink "$symlink_path")
