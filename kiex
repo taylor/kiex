@@ -89,6 +89,7 @@ function usage() {
   printf "%b" "    list known                - shows available Elixir releases\n"
   printf "%b" "    list branches             - shows available Elixir branches\n"
   printf "%b" "    install <version>         - installs the given release version\n"
+  printf "%b" "    alias <version> <alias>   - creates an alias for the given version\n"
   printf "%b" "    use <version> [--default] - uses the given version for this shell\n"
   printf "%b" "    shell <version>           - uses the given version for this shell\n"
   printf "%b" "    default <version>         - sets the default version to be used\n"
@@ -726,6 +727,18 @@ function get_version_from_alias() {
   echo "$version_installed"
 }
 
+function create_alias() {
+  local source_version="$1"
+  local alias_name="$2"
+  local version_installed=$(find_elixir_ver "$source_version")
+
+  if [[ ! -z $version_installed ]]; then
+    ln -fs ${elixirs_path}/$version_installed.env ${elixirs_path}/.elixir-$alias_name
+  else
+    echo "Elixir $source_version is not installed"
+  fi
+}
+
 function elixir_subshell() {
   target_elixir="$1"
   version=$(find_elixir_ver "$target_elixir")
@@ -950,6 +963,11 @@ case $action in
     ;;
   setup|reinstall)
     setup
+    exit
+    ;;
+  alias)
+    [[ -z "$1" ]] || [[ -z "$2" ]] && usage && exit 1
+    create_alias "$1" "$2"
     exit
     ;;
   *)
