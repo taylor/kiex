@@ -560,8 +560,10 @@ function install_elixir() {
   install_path="${elixirs_path}/elixir-${version}"
 
   cd "$build_path"
+  echo "Downloading elixir version ${version}"
   git clone https://github.com/elixir-lang/elixir.git elixir-git 2> /dev/null
   cd elixir-git
+  echo "Installing elixir version ${version}"
   git checkout -f master
   git fetch -t
   # TODO: deal with conflicts between branches and tags
