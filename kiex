@@ -492,7 +492,7 @@ function get_known_elixir_releases() {
   x=${x//v/}
 
   # update_release_cache "$x"
-  echo "$x" | sed 's/^/    /'
+  echo "$x" | sed 's/^/    /' | sort --version-sort
 }
 
 function list_known() {
