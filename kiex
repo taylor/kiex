@@ -286,6 +286,7 @@ function kiex() {
     source_line="$(USERSHELL=notcsh $HOME/.kiex/bin/kiex $*|grep source)"
     if [ -z "$source_line" ] ; then
       echo "Failed to $*"
+      return 1
     else
       eval "$source_line"
       shift
