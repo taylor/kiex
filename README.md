@@ -35,7 +35,7 @@ List current branches
  * ``` kiex list branches ```
 
 Install a known release or branch
- * ``` kiex install 0.12.5 ``` or ``` kiex install stable ```
+ * ``` kiex install 0.12.5 ```
 
 Use specific elixir version
  * ``` kiex use 0.12.5 ``` -- Sets the elixir version for current shell.
