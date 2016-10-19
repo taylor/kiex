@@ -45,7 +45,7 @@ if [ "$SYSTEM" = "Linux" ] ; then
     DISTRO="Ubuntu"
   elif (( "$(grep -ic Centos /etc/issue)" > 0 )) ; then
     DISTRO="Centos"
-  elif (( "$([[ -f /etc/inittab ]] && grep -ic Gentoo /etc/inittab)" > 0 )) ; then
+  elif [[ -f /etc/gentoo-release ]] ; then
     DISTRO="Gentoo"
   else
     echo "Unknown Linux distribution"
