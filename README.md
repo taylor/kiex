@@ -44,7 +44,7 @@ Create an alias for the specified elixir version
  * ``` kiex alias 0.12.5 0.12 ```
 
 Use sub-shell with specific elixir version
- * ``` kiex shell 0.12.5 ``` -- Starts sub-shell with given elixir version.  Exiting shell goes to default.
+ * ``` kiex shell 0.12.5 ``` -- Starts sub-shell with given elixir version. Exiting shell goes to default.
 
 Set default elixir version
  * ``` kiex default 0.12.5 ```
@@ -59,7 +59,7 @@ Upgrade kiex
 ### Sourcing elixir into your path
 
 After installing your preferred version of elixir and setting it as your default you can use kiex scripts to
-put your default elixir bin into your path.  One way to do this is to add the following line into your rc file:
+put your default elixir bin into your path. One way to do this is to add the following line into your rc file:
 
 ```
 [[ -s "$HOME/.kiex/scripts/kiex" ]] && source "$HOME/.kiex/scripts/kiex"
@@ -89,7 +89,7 @@ How is it like Kerl?
 
 How is it not like Kerl?
  * Not as flexible on install path
- * Dynamically get's release list instead of caching
+ * Dynamically gets release list instead of caching
  * Build and install actions are not separated
 
 How is it like RVM?
