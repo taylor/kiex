@@ -817,6 +817,8 @@ function reset_elixir() {
 function list_elixirs() {
   typeset current_elixir elixirs version selected system_elixir system_version \
     default_elixir string binary
+  declare -A ealiases=()
+  typeset alias_file alias_name target_file target_name target_alias_list
 
   if [ -e "$elixirs_path"/.default ] ; then
     default_elixir="elixir-$(source $elixirs_path/.default ; echo $ELIXIR_VERSION)"
@@ -835,6 +837,24 @@ function list_elixirs() {
     find . -maxdepth 1 -mindepth 1 -type d 2> /dev/null | sort
     #find . -maxdepth 1 -mindepth 1 -type d | sed -e 's#./##g'
     ))
+
+  pushd "$elixirs_path" > /dev/null
+  target_alias_list=""
+  for alias_file in $(find . -maxdepth 1 -mindepth 1 -type l -name ".elixir-*")
+  do
+    alias_name="${alias_file//.\/.elixir-}"
+    target_file="$(readlink $alias_file)"
+    target_name="$(basename $target_file .env)"
+
+    target_alias_list="${ealiases[$target_name]}"
+    if [[ -z "$target_alias_list" ]]; then
+      target_alias_list="$alias_name"
+    else
+      target_alias_list="$target_alias_list $alias_name"
+    fi
+    ealiases[$target_name]=$target_alias_list
+  done
+  popd > /dev/null
 
   #for version in "${elixirs//.\/}"
   for version in "${elixirs[@]//.\/}"
@@ -858,6 +878,8 @@ function list_elixirs() {
     fi
 
     printf "%b" "$version"
+    target_alias_list="${ealiases[$version]}"
+    [[ -n "$target_alias_list" ]] && printf " [%b]" "$target_alias_list"
     printf "%b" "\n"
   done
 
