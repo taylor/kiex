@@ -95,6 +95,7 @@ function usage() {
   printf "%b" "    list branches             - shows available Elixir branches\n"
   printf "%b" "    install <version>         - installs the given release version\n"
   printf "%b" "    alias <version> <alias>   - creates an alias for the given version\n"
+  printf "%b" "    unalias <alias>           - removes an alias\n"
   printf "%b" "    use <version> [--default] - uses the given version for this shell\n"
   printf "%b" "    shell <version>           - uses the given version for this shell\n"
   printf "%b" "    default <version>         - sets the default version to be used\n"
@@ -747,6 +748,17 @@ function create_alias() {
   fi
 }
 
+function remove_alias() {
+  local alias_name="$1"
+  local symlink_path="${elixirs_path}/.elixir-$alias_name"
+
+  if [[ -L "$symlink_path" ]]; then
+    rm -f "$symlink_path"
+  else
+    echo "Alias '$alias_name' does not exist."
+  fi
+}
+
 function elixir_subshell() {
   target_elixir="$1"
   version=$(find_elixir_ver "$target_elixir")
@@ -976,6 +988,11 @@ case $action in
   alias)
     [[ -z "$1" ]] || [[ -z "$2" ]] && usage && exit 1
     create_alias "$1" "$2"
+    exit
+    ;;
+  unalias)
+    [[ -z "$1" ]] && usage && exit 1
+    remove_alias "$1"
     exit
     ;;
   *)
