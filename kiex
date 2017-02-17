@@ -94,6 +94,7 @@ function usage() {
   printf "%b" "    list known                - shows available Elixir releases\n"
   printf "%b" "    list branches             - shows available Elixir branches\n"
   printf "%b" "    install <version>         - installs the given release version\n"
+  printf "%b" "    uninstall <version>       - uninstalls the given release version\n"
   printf "%b" "    alias <version> <alias>   - creates an alias for the given version\n"
   printf "%b" "    unalias <alias>           - removes an alias\n"
   printf "%b" "    use <version> [--default] - uses the given version for this shell\n"
