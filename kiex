@@ -94,7 +94,9 @@ function usage() {
   printf "%b" "    list known                - shows available Elixir releases\n"
   printf "%b" "    list branches             - shows available Elixir branches\n"
   printf "%b" "    install <version>         - installs the given release version\n"
+  printf "%b" "    uninstall <version>       - uninstalls the given release version\n"
   printf "%b" "    alias <version> <alias>   - creates an alias for the given version\n"
+  printf "%b" "    unalias <alias>           - removes an alias\n"
   printf "%b" "    use <version> [--default] - uses the given version for this shell\n"
   printf "%b" "    shell <version>           - uses the given version for this shell\n"
   printf "%b" "    default <version>         - sets the default version to be used\n"
@@ -622,6 +624,71 @@ function install_elixir() {
   esac
 }
 
+function uninstall_elixir() {
+  typeset version delete_version current_elixir default_elixir iexpath x1
+  typeset alias_file alias_name target_file target_name target_alias_list a
+
+  version="$1"
+  delete_version=$(find_elixir_ver "$version")
+
+  if [[ -z "$delete_version" ]]; then
+    echo "Elixir version '$version' not found."
+    exit 1
+  fi
+
+  if [[ -e "$elixirs_path"/.default ]]; then
+    default_elixir="elixir-$(source $elixirs_path/.default ; echo $ELIXIR_VERSION)"
+  fi
+
+  iexpath=$(which iex 2> /dev/null)
+  if [[ -n "${iexpath}" ]]; then
+    x1=${iexpath/$elixirs_path\/}
+    current_elixir=${x1/\/bin\/iex}
+  fi
+
+  if [[ "$delete_version" == "$current_elixir" ]]; then
+    echo "'$version' is the current version of Elixir."
+    echo "Please set kiex to use another version of Elixir and try again."
+    exit 1
+  fi
+
+  if [[ "$delete_version" == "$default_elixir" ]]; then
+    reset_elixir > /dev/null
+  fi
+
+  # remove aliases
+  pushd "$elixirs_path" > /dev/null
+  target_alias_list=""
+  for alias_file in $(find . -maxdepth 1 -mindepth 1 -type l -name ".elixir-*")
+  do
+    alias_name="${alias_file//.\/.elixir-}"
+    target_file="$(readlink $alias_file)"
+    target_name="$(basename $target_file .env)"
+
+    target_alias_list_name="ealiases__${target_name//[^[:alnum:]]/}"
+    target_alias_list=${!target_alias_list_name}
+    if [[ -z "$target_alias_list" ]]; then
+      target_alias_list="$alias_name"
+    else
+      target_alias_list="$target_alias_list $alias_name"
+    fi
+    printf -v "ealiases__${target_name//[^[:alnum:]]/}" %s "$target_alias_list"
+  done
+  popd > /dev/null
+
+  target_alias_list_name="ealiases__${delete_version//[^[:alnum:]]/}"
+  target_alias_list=${!target_alias_list_name}
+  for a in $target_alias_list; do
+    remove_alias "$a"
+  done
+
+  # remove the actual files
+  rm -f "$KIEX_HOME/elixirs/.$delete_version.env."*sh*
+  rm -Rf "$KIEX_HOME/elixirs/$delete_version"
+  rm -f "$KIEX_HOME/elixirs/$delete_version.env"*
+  rm -Rf "$KIEX_HOME/mix/archives/$delete_version"
+}
+
 function create_env_file() {
   new_ver="$1"
   new_file="${elixirs_path}/elixir-${new_ver}.env"
@@ -747,6 +814,17 @@ function create_alias() {
   fi
 }
 
+function remove_alias() {
+  local alias_name="$1"
+  local symlink_path="${elixirs_path}/.elixir-$alias_name"
+
+  if [[ -L "$symlink_path" ]]; then
+    rm -f "$symlink_path"
+  else
+    echo "Alias '$alias_name' does not exist."
+  fi
+}
+
 function elixir_subshell() {
   target_elixir="$1"
   version=$(find_elixir_ver "$target_elixir")
@@ -805,6 +883,7 @@ function reset_elixir() {
 function list_elixirs() {
   typeset current_elixir elixirs version selected system_elixir system_version \
     default_elixir string binary
+  typeset alias_file alias_name target_file target_name target_alias_list
 
   if [ -e "$elixirs_path"/.default ] ; then
     default_elixir="elixir-$(source $elixirs_path/.default ; echo $ELIXIR_VERSION)"
@@ -823,6 +902,25 @@ function list_elixirs() {
     find . -maxdepth 1 -mindepth 1 -type d 2> /dev/null | sort
     #find . -maxdepth 1 -mindepth 1 -type d | sed -e 's#./##g'
     ))
+
+  pushd "$elixirs_path" > /dev/null
+  target_alias_list=""
+  for alias_file in $(find . -maxdepth 1 -mindepth 1 -type l -name ".elixir-*")
+  do
+    alias_name="${alias_file//.\/.elixir-}"
+    target_file="$(readlink $alias_file)"
+    target_name="$(basename $target_file .env)"
+
+    target_alias_list_name="ealiases__${target_name//[^[:alnum:]]/}"
+    target_alias_list=${!target_alias_list_name}
+    if [[ -z "$target_alias_list" ]]; then
+      target_alias_list="$alias_name"
+    else
+      target_alias_list="$target_alias_list $alias_name"
+    fi
+    printf -v "ealiases__${target_name//[^[:alnum:]]/}" %s "$target_alias_list"
+  done
+  popd > /dev/null
 
   #for version in "${elixirs//.\/}"
   for version in "${elixirs[@]//.\/}"
@@ -846,6 +944,9 @@ function list_elixirs() {
     fi
 
     printf "%b" "$version"
+    target_alias_list_name="ealiases__${version//[^[:alnum:]]/}"
+    target_alias_list=${!target_alias_list_name}
+    [[ -n "$target_alias_list" ]] && printf " [%b]" "$target_alias_list"
     printf "%b" "\n"
   done
 
@@ -931,6 +1032,10 @@ case $action in
     fi
     install_elixir "$1"
     ;;
+  uninstall)
+    [[ -z "$1" ]] && usage && exit 1
+    uninstall_elixir "$1"
+    ;;
   use)
     [[ -z "$1" ]] && usage && exit 1
     if [ "$2" = "--default" -o "$2" = "-default" ] ; then
@@ -976,6 +1081,11 @@ case $action in
   alias)
     [[ -z "$1" ]] || [[ -z "$2" ]] && usage && exit 1
     create_alias "$1" "$2"
+    exit
+    ;;
+  unalias)
+    [[ -z "$1" ]] && usage && exit 1
+    remove_alias "$1"
     exit
     ;;
   *)
