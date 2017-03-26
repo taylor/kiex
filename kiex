@@ -985,6 +985,36 @@ function validate_install() {
   fi
 }
 
+function find_local_version_file() {
+  local root="$1"
+  while ! [[ "$root" =~ ^//[^/]*$ ]]; do
+    if [ -e "${root}/.elixir-version" ]; then
+      echo "${root}/.elixir-version"
+      return 0
+    fi
+    [ -n "$root" ] || break
+    root="${root%/*}"
+  done
+  return 1
+}
+
+function determine_elixir_version_file() {
+  PWD=$(pwd)
+  find_local_version_file "$base_path" || {
+    [ "$base_path" != "$PWD" ] && find_local_version_file "$PWD"
+  } || echo "${base_path}/version"
+}
+
+function determine_elixir_version() {
+  local file=$(determine_elixir_version_file)
+  if [ -f "$file" ]; then
+    local version=$(head -1 $file)
+  else
+    local version=""
+  fi
+  echo "$version"
+}
+
 #################################
 #################################
 
@@ -1022,26 +1052,38 @@ case $action in
     fi
     ;;
   install)
-    [[ -z "$1" ]] && usage && exit 1
-    if [ "$1" = "kiex" ] ; then
+    if [ -z ${1+x} ]; then
+      e_version=$(determine_elixir_version)
+    else
+      e_version=$1
+    fi
+
+    [[ -z "$e_version" ]] && usage && exit 1
+    if [ "$e_version" = "kiex" ] ; then
       setup
       echo "kiex has been installed in $KIEX_HOME"
       echo "Add the following to your shell's config file (.bash_profile/.profile):"
       echo "    [[ -s \"\$HOME/.kiex/scripts/kiex\" ]] && source \"\$HOME/.kiex/scripts/kiex\""
       exit
     fi
-    install_elixir "$1"
+    install_elixir "$e_version"
     ;;
   uninstall)
     [[ -z "$1" ]] && usage && exit 1
     uninstall_elixir "$1"
     ;;
   use)
-    [[ -z "$1" ]] && usage && exit 1
-    if [ "$2" = "--default" -o "$2" = "-default" ] ; then
-      set_default_elixir "$1"
+    if [ -z ${1+x} ] ; then
+      e_version=$(determine_elixir_version)
+    else
+      e_version=$1
     fi
-    use_elixir "$1"
+
+    [[ -z "$e_version" ]] && usage && exit 1
+    if [ "$2" = "--default" -o "$2" = "-default" ] ; then
+      set_default_elixir "$e_version"
+    fi
+    use_elixir "$e_version"
     ;;
   default)
     [[ -z "$1" ]] && usage && exit 1
