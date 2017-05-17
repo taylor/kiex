@@ -504,16 +504,8 @@ function get_known_elixir_releases() {
 }
 
 function get_latest_elixir_release() {
-  # TODO: finish adding caching support with etags
-  # xetag=$(curl -i -H "User-Agent: $USER_AGENT" -qs https://api.github.com/repos/elixir-lang/elixir/releases |grep "^ETag")
-  # etag=${xetag//Etag: "/}
-#
-#   x=$(curl -i -H "User-Agent: $USER_AGENT" -H "Accept: application/json" -qs https://api.github.com/repos/elixir-lang/elixir/releases |grep '"tag_name":|ETag')
-#   xetag=$(echo $x|grep ETag)
-#   x=$(echo $x|grep -v ETag)
-
   x=$(curl -i ${AUTH_HEADER[*]} -H "User-Agent: $USER_AGENT" -H 'Accept: application/json' -qs https://api.github.com/repos/elixir-lang/elixir/releases/latest | tr ',' '\n' | grep '"tag_name":' | sed -E 's/"tag_name":"v(.+)"$/\1/')
-  # update_release_cache "$x"
+  
   echo "$x"
 }
 
