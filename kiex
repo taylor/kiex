@@ -503,6 +503,12 @@ function get_known_elixir_releases() {
   echo "$x" | sed 's/^/    /' | sort -t. -k 1,1n -k 2,2n -k 3,3n -k 4,4n
 }
 
+function get_latest_elixir_release() {
+  x=$(curl -i ${AUTH_HEADER[*]} -H "User-Agent: $USER_AGENT" -H 'Accept: application/json' -qs https://api.github.com/repos/elixir-lang/elixir/releases/latest | tr ',' '\n' | grep '"tag_name":' | sed -E 's/"tag_name":"v(.+)"$/\1/')
+  
+  echo "$x"
+}
+
 function list_known() {
   echo "Getting the available releases from https://github.com/elixir-lang/elixir/releases"
   echo
@@ -511,6 +517,22 @@ function list_known() {
 
   echo "Known Elixir releases: "
   printf "%b" "${elixir_releases}\n"
+}
+
+function get_latest() {
+  echo "Getting the latest release from https://github.com/elixir-lang/elixir/releases/latest"
+  # add empty line
+  echo
+  local latest_release=$(get_latest_elixir_release)
+  echo "Latest release is ${latest_release}"
+  # add empty line
+  echo
+  read -p "Do you want to install it? [y/n]" -n 1 -r
+
+  if [[ $REPLY =~ ^[Yy]$ ]]
+  then
+    install_elixir $latest_release
+  fi
 }
 
 function valid_known_release() {
@@ -1028,6 +1050,10 @@ case $action in
       echo "kiex has been installed in $KIEX_HOME"
       echo "Add the following to your shell's config file (.bash_profile/.profile):"
       echo "    [[ -s \"\$HOME/.kiex/scripts/kiex\" ]] && source \"\$HOME/.kiex/scripts/kiex\""
+      exit
+    fi
+    if [ "$1" = "latest" ] ; then
+      get_latest
       exit
     fi
     install_elixir "$1"
