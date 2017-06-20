@@ -313,7 +313,7 @@ EOF
   ## Fish
   cat <<"EOF"> "$KIEX_SCRIPTS_PATH/kiex.fish"
 set KIEX_HOME $HOME/.kiex
-setenv PATH $KIEX_HOME/bin $PATH
+set -gx PATH $KIEX_HOME/bin $PATH
 
 if test -f $KIEX_HOME/elixirs/.default.fish
   source $KIEX_HOME/elixirs/.default.fish
@@ -748,9 +748,9 @@ EOF
     mv -f "$new_file" "${new_file}.old"
   fi
 cat <<EOF> $new_file
-setenv ELIXIR_VERSION $new_ver
-setenv PATH ${elixirs_source_path}/elixir-${new_ver}/bin \$PATH
-setenv MIX_ARCHIVES ${mix_archives_source_path}/elixir-${new_ver}
+set -gx ELIXIR_VERSION $new_ver
+set -gx PATH ${elixirs_source_path}/elixir-${new_ver}/bin \$PATH
+set -gx MIX_ARCHIVES ${mix_archives_source_path}/elixir-${new_ver}
 EOF
 }
 
