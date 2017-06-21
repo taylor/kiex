@@ -13,7 +13,7 @@ Usage is based *lightly* on [RVM](http://rvm.io), [kerl](https://github.com/spaw
 
 ### Install
 
-Prereqs: bash, curl, git
+**Prerequisites:** bash, curl, git, erl (a recent, stable erlang installation)
 
 Run the following to get up and running:
 
@@ -34,7 +34,7 @@ List known releases
 List current branches
  * ``` kiex list branches ```
 
-Install a known release or branch
+Install a known release or branch.
  * ``` kiex install 0.12.5 ```
 
 Use specific elixir version
