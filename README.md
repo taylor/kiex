@@ -149,6 +149,7 @@ Related tools:
    - You can hack it in by adding kiex use <version> to .rvmrc or friends ;P
 
 <a name="notes">
+
 ### Notes
 
 Some erlang builds (including default kerl) are unusuable on current CentOS and Fedora distros as a result of an OpenSSL update.  -- 2014/03/31
