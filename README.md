@@ -18,7 +18,7 @@ Usage is based *lightly* on [RVM](http://rvm.io), [kerl](https://github.com/spaw
 Run the following to get up and running:
 
 ```
-\curl -sSL https://raw.githubusercontent.com/taylor/kiex/master/install | bash -s
+curl -sSL https://raw.githubusercontent.com/taylor/kiex/master/install | bash -s
 ```
 
 which will install in $HOME/.kiex.
