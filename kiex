@@ -739,7 +739,7 @@ EOF
 cat <<EOF> $new_file
 setenv ELIXIR_VERSION "$new_ver"
 setenv PATH "${elixirs_source_path}/elixir-${new_ver}/bin:\$PATH"
-setenv MIX_ARCHIVES="${mix_archives_source_path}/elixir-${new_ver}"
+setenv MIX_ARCHIVES "${mix_archives_source_path}/elixir-${new_ver}"
 EOF
 
 ## Fish
