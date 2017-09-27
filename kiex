@@ -152,6 +152,10 @@ function check_erlang_release() {
   fi
 
   erlang_release=($(awk -F, 'NR==1 {gsub(/"/,"",$3);print $3}' "$erlang_release_file" | sed 's/R\([0-9]*\)\([A-Z]\)/\1 \2 /'))
+  if [ -z "$erlang_release" ] ; then
+    ## Starting in OTP 20.1, this file has a header comment of %% coding: utf-8 which breaks the above query. NR==2 fixes it.
+    erlang_release=($(awk -F, 'NR==2 {gsub(/"/,"",$3);print $3}' "$erlang_release_file" | sed 's/R\([0-9]*\)\([A-Z]\)/\1 \2 /'))
+  fi
   r="${erlang_release[0]}"
   c="${erlang_release[1]}"
   cn="${erlang_release[2]}"
