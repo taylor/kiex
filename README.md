@@ -13,7 +13,7 @@ Usage is based *lightly* on [RVM](http://rvm.io), [kerl](https://github.com/spaw
 
 ### Install
 
-**Prerequisites:** bash, curl, git, erl (a recent, stable erlang installation)
+**Prerequisites:** bash, curl, erlang, git, make, openssl 
 
 Run the following to get up and running:
 
