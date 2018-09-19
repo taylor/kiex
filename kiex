@@ -494,7 +494,7 @@ function get_known_elixir_releases() {
 #   xetag=$(echo $x|grep ETag)
 #   x=$(echo $x|grep -v ETag)
 
-  x=$(\curl -i ${AUTH_HEADER[*]} -H "User-Agent: $USER_AGENT" -H 'Accept: application/json' -qs https://api.github.com/repos/elixir-lang/elixir/releases?per_page=100 | tr ',' '\n' | grep '"tag_name":')
+  x=$(\curl -i ${AUTH_HEADER[*]} -H "User-Agent: $USER_AGENT" -H 'Accept: application/json' -qs "https://api.github.com/repos/elixir-lang/elixir/releases?per_page=100" | tr ',' '\n' | grep '"tag_name":')
   x=${x//\"tag_name\":/}
   x=${x//[\",]/}
   x=${x//v/}
