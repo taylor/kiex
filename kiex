@@ -112,7 +112,8 @@ function usage() {
 function readlink_f() {
   TARGET_FILE="$1"
 
-  cd `dirname "$TARGET_FILE"`
+  cd "$(dirname "$TARGET_FILE")"
+
   TARGET_FILE=`basename "$TARGET_FILE"`
 
   # Iterate down a (possible) chain of symlinks
@@ -140,7 +141,7 @@ function check_erlang_release() {
         erlang_release_file="$ERL_EXEC_PATH/../../releases/RELEASES"
     fi
   elif [ "$SYSTEM" = "Darwin" -o "$SYSTEM" = "FreeBSD" ] ; then
-    erlang_release_file="$(dirname $(readlink_f $(which erl 2> /dev/null)))/../releases/RELEASES"
+    erlang_release_file="$(dirname "$(readlink_f "$(which erl 2> /dev/null)")")/../releases/RELEASES"
   else
       echo "Unknown system $SYSTEM"
       return 1
