@@ -41,6 +41,8 @@ if [ "$SYSTEM" = "Linux" ] ; then
     esac
   elif (( "$(grep -ic arch /etc/os-release)" > 0 )) ; then
     DISTRO="Arch"
+  elif (( "$(grep -ic Fedora /etc/os-release)" > 0 )) ; then
+    DISTRO="Fedora"
   elif (( "$(grep -ic Ubuntu /etc/issue)" > 0 )) ; then
     DISTRO="Ubuntu"
   elif (( "$(grep -ic Centos /etc/issue)" > 0 )) ; then
