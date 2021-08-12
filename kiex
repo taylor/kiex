@@ -622,6 +622,7 @@ function install_elixir() {
   if [ ! "$?" = 0 ] ; then
     echo "Problem with Elixir build.  Aborting!"
     echo "Please report via https://github.com/taylor/kiex/issues/new"
+    echo "   Include the operating system, erlang version, and shell being used"
     exit 1
   fi
 
