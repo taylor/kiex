@@ -29,7 +29,7 @@ if [ -z "$USERSHELL" ] ; then
 fi
 
 if [ "$SYSTEM" = "Linux" ] ; then
-  if [ -n "$(which lsb_release 2> /dev/null)" ] ; then
+  if ( command -v lsb_release >/dev/null 2>&1 ; ) ; then
     lsb_id=$(lsb_release -s -i)
     case $lsb_id in
       Ubuntu) DISTRO="Ubuntu" ;;
@@ -1015,7 +1015,9 @@ function validate_install() {
 #################################
 
 action="$1"
-shift
+if [ ${#} -gt 0 ] ; then 
+ 	shift
+fi
 
 if [ -z "$action" ] ; then
   usage
