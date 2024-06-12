@@ -590,7 +590,11 @@ function install_elixir() {
   exit_on_invalid_version "$1"
   exit_on_unmet_prereqs
 
-  install_path="${elixirs_path}/elixir-${version}"
+  erl_release=$(erl -eval 'erlang:display(erlang:system_info(otp_release)), halt().' -noshell | grep -oP '\d+(\.\d+)*')
+
+  suffix="${version}-${erl_release}"
+
+  install_path="${elixirs_path}/elixir-${suffix}"
 
   cd "$build_path"
   echo "Downloading elixir version ${version}"
@@ -627,25 +631,25 @@ function install_elixir() {
   fi
 
   # For MIX_ARCHIVES - http://elixir-lang.org/docs/master/mix/Mix.Tasks.Archive.html
-  mkdir -p "${mix_archives_path}/elixir-${version}"
+  mkdir -p "${mix_archives_path}/elixir-${suffix}"
 
   echo "Installed Elixir version $version"
-  create_env_file "$version"
+  create_env_file "$suffix"
 
   echo "Load with:"
-  echo "           kiex use ${version} "
+  echo "           kiex use ${suffix} "
   echo "or load the elixir environment file with: "
   printf "%b" "   "
 
   case $(basename $SHELL) in
     fish)
-      printf "%b" "source ${elixirs_source_path}/.elixir-${version}.env.fish\n"
+      printf "%b" "source ${elixirs_source_path}/.elixir-${suffix}.env.fish\n"
       ;;
     csh|tcsh)
-      printf "%b" "source ${elixirs_source_path}/.elixir-${version}.env.csh\n"
+      printf "%b" "source ${elixirs_source_path}/.elixir-${suffix}.env.csh\n"
       ;;
     *)
-      printf "%b" "source ${elixirs_source_path}/elixir-${version}.env\n"
+      printf "%b" "source ${elixirs_source_path}/elixir-${suffix}.env\n"
       ;;
   esac
 }
