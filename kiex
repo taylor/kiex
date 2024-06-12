@@ -590,7 +590,7 @@ function install_elixir() {
   exit_on_invalid_version "$1"
   exit_on_unmet_prereqs
 
-  erl_release=$(erl -eval 'erlang:display(erlang:system_info(otp_release)), halt().' -noshell | grep -oP '\d+(\.\d+)*')
+  erl_release=$(erl -eval 'erlang:display(erlang:system_info(otp_release)), halt().' -noshell | grep -oE '\d+(\.\d+)*')
 
   suffix="${version}-${erl_release}"
 
