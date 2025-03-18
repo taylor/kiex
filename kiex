@@ -10,7 +10,7 @@ elixirs_path="${base_path}/elixirs"
 elixirs_source_path="\$HOME/.kiex/elixirs"
 mix_archives_path="${base_path}/mix/archives"
 mix_archives_source_path="\$HOME/.kiex/mix/archives"
-kiex_url="https://raw.githubusercontent.com/taylor/kiex/master/kiex"
+kiex_url=${kiex_url:="https://raw.githubusercontent.com/taylor/kiex/master/kiex"}
 cached_release_list="$KIEX_HOME/.cached_release_list"
 cached_branch_list="$KIEX_HOME/.cached_branch_list"
 
@@ -74,7 +74,7 @@ if [ "$INSTALL_KIEX" = 1 ] ; then
     exec "$KIEX_HOME/bin/kiex" selfupdate
   else
     mkdir -p "${KIEX_HOME}/bin"
-    \curl -sSL ${AUTH_HEADER[*]} -o "$KIEX_HOME/bin/kiex" https://raw.githubusercontent.com/taylor/kiex/master/kiex
+    \curl -sSL ${AUTH_HEADER[*]} -o "$KIEX_HOME/bin/kiex" $kiex_url
     chmod +x "$KIEX_HOME/bin/kiex"
 
     echo "Running initial environment setup"
@@ -133,28 +133,8 @@ function readlink_f() {
 }
 
 function check_erlang_release() {
-  if [ "$SYSTEM" = "Linux" ] ; then
-    ERL_EXEC_PATH="$(dirname $(readlink -f $(which erl 2> /dev/null)))"
-    #ERL_EXEC_PATH might show the path to the 'erl' executable in the
-    #erlang/bin or /erlang/erts-*/bin folder.
-    if [ -e $ERL_EXEC_PATH/../releases/RELEASES ] ; then
-        erlang_release_file="$ERL_EXEC_PATH/../releases/RELEASES"
-    else
-        erlang_release_file="$ERL_EXEC_PATH/../../releases/RELEASES"
-    fi
-  elif [ "$SYSTEM" = "Darwin" -o "$SYSTEM" = "FreeBSD" ] ; then
-    erlang_release_file="$(dirname "$(readlink_f "$(which erl 2> /dev/null)")")/../releases/RELEASES"
-  else
-      echo "Unknown system $SYSTEM"
-      return 1
-  fi
+  init_erlang_release_var
 
-  if [ ! -e "$erlang_release_file" ] ; then
-    echo "Failed to find the erlang release file!" 1>&2
-    return 1
-  fi
-
-  erlang_release=($(grep -v '^%' "$erlang_release_file" | awk -F, 'NR==1 {gsub(/"/,"",$3);print $3}' | sed 's/R\([0-9]*\)\([A-Z]\)/\1 \2 /'))
   r="${erlang_release[0]}"
   c="${erlang_release[1]}"
   cn="${erlang_release[2]}"
@@ -195,6 +175,31 @@ function check_erlang_release() {
       false
     fi
   fi
+}
+
+function init_erlang_release_var() {
+  if [ "$SYSTEM" = "Linux" ] ; then
+    ERL_EXEC_PATH="$(dirname $(readlink -f $(which erl 2> /dev/null)))"
+    #ERL_EXEC_PATH might show the path to the 'erl' executable in the
+    #erlang/bin or /erlang/erts-*/bin folder.
+    if [ -e $ERL_EXEC_PATH/../releases/RELEASES ] ; then
+        erlang_release_file="$ERL_EXEC_PATH/../releases/RELEASES"
+    else
+        erlang_release_file="$ERL_EXEC_PATH/../../releases/RELEASES"
+    fi
+  elif [ "$SYSTEM" = "Darwin" -o "$SYSTEM" = "FreeBSD" ] ; then
+    erlang_release_file="$(dirname "$(readlink_f "$(which erl 2> /dev/null)")")/../releases/RELEASES"
+  else
+      echo "Unknown system $SYSTEM"
+      return 1
+  fi
+
+  if [ ! -e "$erlang_release_file" ] ; then
+    echo "Failed to find the erlang release file!" 1>&2
+    return 1
+  fi
+
+  erlang_release=($(grep -v '^%' "$erlang_release_file" | awk -F, 'NR==1 {gsub(/"/,"",$3);print $3}' | sed 's/R\([0-9]*\)\([A-Z]\)/\1 \2 /'))
 }
 
 function bin_found() {
@@ -589,10 +594,9 @@ function install_elixir() {
 
   exit_on_invalid_version "$1"
   exit_on_unmet_prereqs
+  init_erlang_release_var
 
-  erl_release=$(erl -eval 'erlang:display(erlang:system_info(otp_release)), halt().' -noshell | grep -oE '\d+(\.\d+)*')
-
-  suffix="${version}-${erl_release}"
+  suffix="${version}-${erlang_release}"
 
   install_path="${elixirs_path}/elixir-${suffix}"
 
@@ -600,7 +604,7 @@ function install_elixir() {
   echo "Downloading elixir version ${version}"
   git clone https://github.com/elixir-lang/elixir.git elixir-git 2> /dev/null
   cd elixir-git
-  echo "Installing elixir version ${version}"
+  echo "Installing elixir version ${version} into ${install_path}"
   git checkout -f master
   git fetch -t
   # TODO: deal with conflicts between branches and tags
