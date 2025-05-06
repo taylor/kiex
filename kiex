@@ -1,15 +1,19 @@
 #!/usr/bin/env bash
 
-KIEX_HOME="$HOME/.kiex"
+# custom kiex installation directory
+if [[ -z "$KIEX_HOME" ]]; then
+  KIEX_HOME="$HOME/.kiex"
+fi
+
 KIEX_BIN_PATH="$KIEX_HOME/bin/kiex"
 KIEX_SCRIPTS_PATH="$KIEX_HOME/scripts"
 
-base_path="$HOME/.kiex"
+base_path="$KIEX_HOME"
 build_path="${base_path}/builds"
 elixirs_path="${base_path}/elixirs"
-elixirs_source_path="\$HOME/.kiex/elixirs"
+elixirs_source_path="${base_path}/elixirs"
 mix_archives_path="${base_path}/mix/archives"
-mix_archives_source_path="\$HOME/.kiex/mix/archives"
+mix_archives_source_path="${base_path}/mix/archives"
 kiex_url=${kiex_url:="https://raw.githubusercontent.com/taylor/kiex/master/kiex"}
 cached_release_list="$KIEX_HOME/.cached_release_list"
 cached_branch_list="$KIEX_HOME/.cached_branch_list"
@@ -102,7 +106,7 @@ function usage() {
   printf "%b" "    use <version> [--default] - uses the given version for this shell\n"
   printf "%b" "    shell <version>           - uses the given version for this shell\n"
   printf "%b" "    default <version>         - sets the default version to be used\n"
-#  printf "%b" "    setup             - install kiex into \$HOME/.kiex\n"
+#  printf "%b" "    setup             - install kiex into \$KIEX_HOME\n"
   printf "%b" "    selfupdate                - updates kiex itself\n"
   printf "%b" "    implode                   - removes kiex and all installed Elixirs\n"
   printf "%b" "    reset                     - resets default Elixir version to null\n"
@@ -280,20 +284,20 @@ function create_kiex_env_script() {
   cat <<"EOF"> "$KIEX_SCRIPTS_PATH/kiex"
 ## load correct version for this \$SHELL
 ( ( env | grep '^SHELL=' | grep -qic '/csh$' ) && ( set | grep -qc '^BASH=' ; test $? -gt 0 ) ) \
-  && source $HOME/.kiex/scripts/kiex.csh \
-  || source $HOME/.kiex/scripts/kiex.bash
+  && source $KIEX_HOME/scripts/kiex.csh \
+  || source $KIEX_HOME/scripts/kiex.bash
 EOF
 
   ## Bash and Zsh
   cat <<"EOF"> "$KIEX_SCRIPTS_PATH/kiex.bash"
-KIEX_HOME="$HOME/.kiex"
+KIEX_HOME="$KIEX_HOME"
 export PATH=$KIEX_HOME/bin:$PATH
 [[ -f $KIEX_HOME/elixirs/.default ]] && source $KIEX_HOME/elixirs/.default
 
 function kiex() {
   if [ "$1" = "use" ] ; then
-    #eval "$($HOME/.kiex/bin/kiex $*|grep source)"
-    source_line="$(USERSHELL=notcsh $HOME/.kiex/bin/kiex $*|grep source)"
+    #eval "$($KIEX_HOME/bin/kiex $*|grep source)"
+    source_line="$(USERSHELL=notcsh $KIEX_HOME/bin/kiex $*|grep source)"
     if [ -z "$source_line" ] ; then
       echo "Failed to $*"
       return 1
@@ -303,14 +307,14 @@ function kiex() {
       echo "Using $*"
     fi
   else
-    $HOME/.kiex/bin/kiex $*
+    $KIEX_HOME/bin/kiex $*
   fi
 }
 EOF
 
   ## CSH
   cat <<"EOF"> "$KIEX_SCRIPTS_PATH/kiex.csh"
-set KIEX_HOME="$HOME/.kiex"
+set KIEX_HOME="$KIEX_HOME"
 setenv PATH "$KIEX_HOME/bin:$PATH"
 
 if ( -f $KIEX_HOME/elixirs/.default.csh ) then
@@ -320,7 +324,7 @@ EOF
 
   ## Fish
   cat <<"EOF"> "$KIEX_SCRIPTS_PATH/kiex.fish"
-set KIEX_HOME $HOME/.kiex
+set KIEX_HOME $KIEX_HOME
 set -gx PATH $KIEX_HOME/bin $PATH
 
 if test -f $KIEX_HOME/elixirs/.default.fish
@@ -388,7 +392,7 @@ function setup() {
 
   if [ $source_line_found = 0 ] ; then
     echo "    Add the following to your shell's config file (.bashrc/.zshrc/.cshrc):"
-    echo "        test -s \"\$HOME/.kiex/scripts/kiex\" && source \"\$HOME/.kiex/scripts/kiex\""
+    echo "        test -s \"\$KIEX_HOME/scripts/kiex\" && source \"\$KIEX_HOME/scripts/kiex\""
   fi
 
   if [ "$update" = 1 ] ; then
@@ -447,9 +451,9 @@ function kiex_implode() {
   fi
 
   echo "You can now remove the kiex source lines from your startup script.  It looks like:"
-  echo "    test -s \"\$HOME/.kiex/scripts/kiex\" && source \"\$HOME/.kiex/scripts/kiex\""
+  echo "    test -s \"\$KIEX_HOME/scripts/kiex\" && source \"\$KIEX_HOME/scripts/kiex\""
   echo " or"
-  echo "    [[ -s \"\$HOME/.kiex/scripts/kiex\" ]] && source \"\$HOME/.kiex/scripts/kiex\""
+  echo "    [[ -s \"\$KIEX_HOME/scripts/kiex\" ]] && source \"\$KIEX_HOME/scripts/kiex\""
 }
 
 
@@ -1063,7 +1067,7 @@ case $action in
       setup
       echo "kiex has been installed in $KIEX_HOME"
       echo "Add the following to your shell's config file (.bash_profile/.profile):"
-      echo "    [[ -s \"\$HOME/.kiex/scripts/kiex\" ]] && source \"\$HOME/.kiex/scripts/kiex\""
+      echo "    [[ -s \"\$KIEX_HOME/scripts/kiex\" ]] && source \"\$KIEX_HOME/scripts/kiex\""
       exit
     fi
     if [ "$1" = "latest" ] ; then
