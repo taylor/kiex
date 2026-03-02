@@ -282,6 +282,8 @@ function create_kiex_env_script() {
 
   ## Generic loader
   cat <<"EOF"> "$KIEX_SCRIPTS_PATH/kiex"
+## set KIEX_HOME if unset or null
+: "${KIEX_HOME:=$HOME/.kiex}"
 ## load correct version for this \$SHELL
 ( ( env | grep '^SHELL=' | grep -qic '/csh$' ) && ( set | grep -qc '^BASH=' ; test $? -gt 0 ) ) \
   && source $KIEX_HOME/scripts/kiex.csh \
