@@ -551,13 +551,13 @@ function get_latest() {
 
 function valid_known_release() {
   ver="$1"
-  get_known_elixir_releases | grep -q "$1$" 2> /dev/null
+  get_known_elixir_releases | sed 's/^[[:space:]]*//' | grep -Fqx -- "$ver" 2> /dev/null
   echo $?
 }
 
 function valid_branch() {
   ver="$1"
-  get_elixir_branches | grep -q "$1" 2> /dev/null
+  get_elixir_branches | sed 's/^[[:space:]]*//' | grep -Fqx -- "$ver" 2> /dev/null
   echo $?
 }
 
@@ -621,6 +621,11 @@ function install_elixir() {
   else
     git checkout -b "v${version}" -f "v${version}" || git checkout "v${version}"
     git pull origin "v${version}"
+  fi
+
+  if [ ! "$?" = 0 ] ; then
+    echo "Failed to checkout Elixir version ${version}. Aborting!"
+    exit 1
   fi
 
   if [ "$SYSTEM" = "FreeBSD" ] ; then
